@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 00:10:13 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/06 00:10:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:10:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ static inline double	vec3_length(const t_vec3 *v)
 
 // --- Vector Utility Functions ---
 // Global operator overloads are replaced with named functions.
+static inline void	vec3_subtract_inplace(t_vec3 *u, const t_vec3 *v)
+{
+	u->e[0] -= v->e[0];
+	u->e[1] -= v->e[1];
+	u->e[2] -= v->e[2];
+}
 
 // Functions that return a new vector result
 static inline t_vec3	vec3_add(const t_vec3 *u, const t_vec3 *v)

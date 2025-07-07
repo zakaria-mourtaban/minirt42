@@ -3,6 +3,7 @@
 		"minirt.h": "c",
 		"libft.h": "c",
 		"vec3.h": "c",
-		"color.h": "c"
+		"color.h": "c",
+		"math.h": "c"
 	}
 }

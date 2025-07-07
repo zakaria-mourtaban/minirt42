@@ -1,191 +1,273 @@
 /* ************************************************************************** */
-/* */
-/* :::      ::::::::   */
-/* main.c                                             :+:      :+:    :+:   */
-/* +:+ +:+         +:+     */
-/* By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
-/* TLC impromptu <TLC impromptu@student.21-school.ru> +#+  +:+       +#+        */
-/* */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/08 00:26:34 by zmourtab         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/miniRT.h"
 
-// Converts a t_color (doubles from 0.0-1.0) to a 32-bit integer color.
-static int	color_to_int(t_color *color)
+double	random_double(void)
 {
-	int	r;
-	int	g;
-	int	b;
-
-	r = (int)(255.999 * color->e[0]);
-	g = (int)(255.999 * color->e[1]);
-	b = (int)(255.999 * color->e[2]);
-	return (r << 16 | g << 8 | b);
+	return (rand() / (RAND_MAX + 1.0));
 }
 
-// Puts a pixel of a given color into the image buffer at (x, y).
-static void	scene_pixel_put(t_image *img, int x, int y, int color)
+double	random_double_range(double min, double max)
 {
-	int	pixel_offset;
-
-	pixel_offset = (y * img->line_bytes) + (x * (img->pixel_bits / 8));
-	*(unsigned int *)(img->buffer + pixel_offset) = color;
+	return (min + (max - min) * random_double());
 }
 
-// Calculates ray-sphere intersection. Returns intersection distance 't', or -1.0 on a miss.
-static double	hit_sphere(t_point3 center, double radius, const t_ray *r)
+static int	color_to_int(t_color *color, int samples_per_pixel)
 {
-	t_vec3	oc;
-	double	a;
-	double	b;
-	double	c;
-	double	discriminant;
+	double					r;
+	double					g;
+	double					b;
+	double					scale;
+	static const t_interval	intensity = {0.000, 0.999};
 
-	oc = vec3_subtract(&r->orig, &center);
-	a = vec3_dot(&r->dir, &r->dir);
-	b = 2.0 * vec3_dot(&oc, &r->dir);
-	c = vec3_dot(&oc, &oc) - radius * radius;
-	discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
-		return (-1.0);
-	else
-		return ((-b - sqrt(discriminant)) / (2.0 * a));
+	r = color->e[0];
+	g = color->e[1];
+	b = color->e[2];
+	scale = 1.0 / samples_per_pixel;
+	r *= scale;
+	g *= scale;
+	b *= scale;
+	return (((int)(256 * interval_clamp(&intensity, r))) << 16 | ((int)(256
+				* interval_clamp(&intensity, g))) << 8 | ((int)(256
+				* interval_clamp(&intensity, b))));
 }
 
-// Calculates the sphere's color based on the surface normal at the hit point.
-static t_color	get_sphere_color(const t_ray *r, double t)
+static t_color	ray_color(const t_ray *r, t_hittable_list *world)
 {
-	t_point3	hit_point;
-	t_vec3		normal;
-	t_vec3		unit_normal;
-	t_color		final_color;
+	t_hit_record	rec;
+	t_color			final_color;
+	t_vec3			unit_dir;
+	double			a;
+	t_vec3			start_color;
+	t_vec3			end_color;
 
-	hit_point = ray_at(r, t);
-	normal = vec3_subtract(&hit_point, &((t_vec3){{0, 0, -1}}));
-	unit_normal = vec3_unit_vector(&normal);
-	final_color = vec3_create(unit_normal.e[0] + 1, unit_normal.e[1] + 1,
-			unit_normal.e[2] + 1);
-	vec3_scale_inplace(&final_color, 0.5);
+	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
+			&rec))
+	{
+		final_color = vec3_add(&rec.normal, &((t_vec3){{1, 1, 1}}));
+		vec3_scale_inplace(&final_color, 0.5);
+		return (final_color);
+	}
+	unit_dir = vec3_unit_vector(&r->dir);
+	a = 0.5 * (unit_dir.e[1] + 1.0);
+	start_color = vec3_create(1.0, 1.0, 1.0);
+	vec3_scale_inplace(&start_color, 1.0 - a);
+	end_color = vec3_create(0.5, 0.7, 1.0);
+	vec3_scale_inplace(&end_color, a);
+	final_color = vec3_add(&start_color, &end_color);
 	return (final_color);
 }
 
-// Determines the color of a ray.
-static t_color	ray_color(const t_ray *r)
+static t_vec3	sample_square(void)
 {
-	double		t;
-	t_vec3		v1;
-	t_vec3		v2;
-	double		a;
+	// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+	return (vec3_create(random_double() - 0.5, random_double() - 0.5, 0));
+}
+t_ray	get_ray(t_camera *cam, int i, int j)
+{
+	t_vec3		offset;
+	t_vec3		pixel_sample;
+	t_vec3		scaled_delta_u;
+	t_vec3		scaled_delta_v;
+	t_point3	ray_origin;
+	t_vec3		ray_direction;
 
-	t = hit_sphere(vec3_create(0, 0, -1), 0.5, r);
-	if (t > 0.0)
-		return (get_sphere_color(r, t));
-	v1 = vec3_unit_vector(&r->dir);
-	a = 0.5 * (v1.e[1] + 1.0);
-	v1 = vec3_create(1.0, 1.0, 1.0);
-	v2 = vec3_create(0.5, 0.7, 1.0);
-	vec3_scale_inplace(&v1, 1.0 - a);
-	vec3_scale_inplace(&v2, a);
-	return (vec3_add(&v1, &v2));
+	// Construct a camera ray originating from the origin and directed at randomly sampled
+	// point around the pixel location i, j.
+	offset = sample_square();
+	pixel_sample = cam->pixel00_loc;
+	scaled_delta_u = vec3_scale(&cam->pixel_delta_u, i + offset.e[0]);
+	scaled_delta_v = vec3_scale(&cam->pixel_delta_v, j + offset.e[1]);
+	vec3_add_inplace(&pixel_sample, &scaled_delta_u);
+	vec3_add_inplace(&pixel_sample, &scaled_delta_v);
+	ray_origin = cam->center;
+	ray_direction = vec3_subtract(&pixel_sample, &ray_origin);
+	return (ray_create(ray_origin, ray_direction));
 }
 
-// Initializes camera parameters.
-static void	camera_init(t_camera *cam, int width, int height)
+static void	camera_initialize(t_camera *cam)
 {
-	double		viewport_w;
-	t_vec3		viewport_u;
-	t_vec3		viewport_v;
-	t_point3	upper_left;
-	t_vec3		delta_sum;
+	double	focal_length;
+	double	viewport_height;
+	double	viewport_width;
+	t_vec3	viewport_u;
+	t_vec3	viewport_v;
+	t_vec3	viewport_upper_left;
+	t_vec3	half_u;
+	t_vec3	half_v;
 
-	viewport_w = 2.0 * ((double)width / height);
+	cam->image_height = (int)(cam->image_width / cam->aspect_ratio);
+	if (cam->image_height < 1)
+		cam->image_height = 1;
+	cam->pixel_samples_scale = 1.0 / cam->samples_per_pixel;
 	cam->center = vec3_create(0, 0, 0);
-	viewport_u = vec3_create(viewport_w, 0, 0);
-	viewport_v = vec3_create(0, -2.0, 0);
-	cam->pixel_delta_u = vec3_divide(&viewport_u, width);
-	cam->pixel_delta_v = vec3_divide(&viewport_v, height);
-	upper_left = vec3_subtract(&cam->center, &((t_vec3){{0, 0, 1.0}}));
-	vec3_add_inplace(&upper_left,
-		&((t_vec3){{-viewport_w / 2, 1.0, 0}}));
-	delta_sum = vec3_add(&cam->pixel_delta_u, &cam->pixel_delta_v);
-	vec3_scale_inplace(&delta_sum, 0.5);
-	cam->pixel00_loc = vec3_add(&upper_left, &delta_sum);
+	focal_length = 1.0;
+	viewport_height = 2.0;
+	viewport_width = viewport_height * ((double)cam->image_width
+			/ cam->image_height);
+	viewport_u = vec3_create(viewport_width, 0, 0);
+	viewport_v = vec3_create(0, -viewport_height, 0);
+	cam->pixel_delta_u = vec3_divide(&viewport_u, cam->image_width);
+	cam->pixel_delta_v = vec3_divide(&viewport_v, cam->image_height);
+	viewport_upper_left = vec3_subtract(&cam->center, &((t_vec3){{0, 0,
+				focal_length}}));
+	half_u = vec3_divide(&viewport_u, 2.0);
+	half_v = vec3_divide(&viewport_v, 2.0);
+	vec3_subtract_inplace(&viewport_upper_left, &half_u);
+	vec3_subtract_inplace(&viewport_upper_left, &half_v);
+	cam->pixel00_loc = viewport_upper_left;
 }
 
-// Renders a single pixel for the given coordinates (i, j).
-static void	render_pixel(t_scene *scene, int i, int j)
+void	camera_render(t_camera *cam, t_hittable_list *world)
 {
-	t_ray		r;
-	t_color		pixel_color;
-	t_vec3		scaled_u;
-	t_vec3		scaled_v;
-	t_point3	pixel_center;
+	char	*dst;
+	t_color	pixel_color;
+	t_ray	r;
+	t_color	sampled_color;
 
-	scaled_u = vec3_scale(&scene->camera.pixel_delta_u, (double)i);
-	scaled_v = vec3_scale(&scene->camera.pixel_delta_v, (double)j);
-	pixel_center = vec3_add(&scene->camera.pixel00_loc, &scaled_u);
-	vec3_add_inplace(&pixel_center, &scaled_v);
-	r = ray_create(scene->camera.center,
-			vec3_subtract(&pixel_center, &scene->camera.center));
-	pixel_color = ray_color(&r);
-	scene_pixel_put(&scene->image, i, j, color_to_int(&pixel_color));
-}
-
-// Loops through each pixel of the image and calls render_pixel.
-static void	render(t_scene *scene)
-{
-	int			j;
-	int			i;
-
-	j = 0;
-	ft_printf("Rendering...\n");
-	while (j < scene->height)
+	camera_initialize(cam);
+	cam->mlx = mlx_init();
+	cam->win = mlx_new_window(cam->mlx, cam->image_width, cam->image_height,
+			"miniRT");
+	cam->image.img_ptr = mlx_new_image(cam->mlx, cam->image_width,
+			cam->image_height);
+	cam->image.buffer = mlx_get_data_addr(cam->image.img_ptr,
+			&cam->image.pixel_bits, &cam->image.line_bytes, &cam->image.endian);
+	ft_printf("P3\n%d %d\n255\n", cam->image_width, cam->image_height);
+	for (int j = 0; j < cam->image_height; ++j)
 	{
-		i = 0;
-		while (i < scene->width)
+		ft_printf("\rScanlines remaining: %d ", (cam->image_height - j));
+		for (int i = 0; i < cam->image_width; ++i)
 		{
-			render_pixel(scene, i, j);
-			i++;
+			pixel_color = vec3_create(0, 0, 0);
+			for (int sample = 0; sample < cam->samples_per_pixel; ++sample)
+			{
+				r = get_ray(cam, i, j);
+				sampled_color = ray_color(&r, world);
+				vec3_add_inplace(&pixel_color, &sampled_color);
+			}
+			dst = cam->image.buffer + (j * cam->image.line_bytes + i
+					* (cam->image.pixel_bits / 8));
+			*(unsigned int *)dst = color_to_int(&pixel_color,
+					cam->samples_per_pixel);
 		}
-		j++;
 	}
-	mlx_put_image_to_window(scene->mlx, scene->win,
-		scene->image.img_ptr, 0, 0);
-	ft_printf("Done.\n");
+	mlx_put_image_to_window(cam->mlx, cam->win, cam->image.img_ptr, 0, 0);
+	ft_printf("\rDone.                 \n");
 }
 
-// Handles key presses; exits if ESC is pressed.
+// --- Main Program and Hooks ---
+
 int	key_hook(int keycode, t_scene *scene)
 {
 	if (keycode == KEY_ESC)
 	{
-		mlx_destroy_window(scene->mlx, scene->win);
-		mlx_destroy_image(scene->mlx, scene->image.img_ptr);
-		mlx_destroy_display(scene->mlx);
-		free(scene->mlx);
+		hittable_list_free(scene->world);
+		mlx_destroy_window(scene->camera->mlx, scene->camera->win);
 		exit(0);
 	}
 	return (0);
 }
 
-// Program entry point.
 int	main(void)
 {
 	t_scene	scene;
 
-	scene.width = 800;
-	scene.height = 450;
-	scene.mlx = mlx_init();
-	if (!scene.mlx)
-		return (1);
-	scene.win = mlx_new_window(scene.mlx, scene.width, scene.height, "miniRT");
-	scene.image.img_ptr = mlx_new_image(scene.mlx, scene.width, scene.height);
-	scene.image.buffer = mlx_get_data_addr(scene.image.img_ptr,
-			&scene.image.pixel_bits, &scene.image.line_bytes,
-			&scene.image.endian);
-	camera_init(&scene.camera, scene.width, scene.height);
-	render(&scene);
-	mlx_hook(scene.win, 2, 1L << 0, key_hook, &scene);
-	mlx_loop(scene.mlx);
+	scene.camera = (t_camera *)malloc(sizeof(t_camera));
+	// World
+	scene.world = hittable_list_new(2);
+	hittable_list_add(scene.world, (t_hittable *)sphere_new(vec3_create(0, 0,
+				-1), 0.5));
+	hittable_list_add(scene.world, (t_hittable *)sphere_new(vec3_create(0,
+				-100.5, -1), 100));
+	// Camera
+	scene.camera->aspect_ratio = 16.0 / 9.0;
+	scene.camera->image_width = 1920;
+	scene.camera->samples_per_pixel = 100;
+	// Render
+	camera_render(scene.camera, scene.world);
+	// Hooks
+	mlx_hook(scene.camera->win, 2, 1L << 0, key_hook, &scene);
+	mlx_loop(scene.camera->mlx);
 	return (0);
+}
+
+// Hittable list implementation...
+bool	hittable_list_hit(const t_hittable *self, const t_ray *r,
+		t_interval ray_t, t_hit_record *rec)
+{
+	t_hittable_list	*list;
+	t_hit_record	temp_rec;
+	bool			hit_anything;
+	double			closest_so_far;
+	int				i;
+
+	list = (t_hittable_list *)self;
+	hit_anything = false;
+	closest_so_far = ray_t.max;
+	i = 0;
+	while (i < list->size)
+	{
+		if (list->objects[i]->hit(list->objects[i], r, interval_new(ray_t.min,
+					closest_so_far), &temp_rec))
+		{
+			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			*rec = temp_rec;
+		}
+		i++;
+	}
+	return (hit_anything);
+}
+
+t_hittable_list	*hittable_list_new(int capacity)
+{
+	t_hittable_list	*list;
+
+	list = (t_hittable_list *)malloc(sizeof(t_hittable_list));
+	if (!list)
+		return (NULL);
+	list->objects = (t_hittable **)malloc(sizeof(t_hittable *) * capacity);
+	if (!list->objects)
+	{
+		free(list);
+		return (NULL);
+	}
+	list->size = 0;
+	list->capacity = capacity;
+	list->hittable.hit = hittable_list_hit;
+	return (list);
+}
+
+void	hittable_list_add(t_hittable_list *list, t_hittable *object)
+{
+	if (list->size < list->capacity)
+		list->objects[list->size++] = object;
+}
+
+void	hittable_list_clear(t_hittable_list *list)
+{
+	int	i;
+
+	i = 0;
+	while (i < list->size)
+		free(list->objects[i++]);
+	list->size = 0;
+}
+
+void	hittable_list_free(t_hittable_list *list)
+{
+	hittable_list_clear(list);
+	free(list->objects);
+	free(list);
 }
