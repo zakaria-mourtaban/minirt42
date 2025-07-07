@@ -1,11 +1,13 @@
 /* ************************************************************************** */
-/* */
-/* :::      ::::::::   */
-/* main.c                                             :+:      :+:    :+:   */
-/* +:+ +:+         +:+     */
-/* By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
-/* TLC impromptu <TLC impromptu@student.21-school.ru> +#+  +:+       +#+        */
-/* */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/07 12:47:33 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/07 17:24:05 by zmourtab         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/miniRT.h"
@@ -173,8 +175,8 @@ int	main(void)
 {
 	t_scene	scene;
 
-	scene.width = 800;
-	scene.height = 450;
+	scene.width = 1920;
+	scene.height = 1080;
 	scene.mlx = mlx_init();
 	if (!scene.mlx)
 		return (1);
