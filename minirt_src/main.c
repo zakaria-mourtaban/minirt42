@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:27:38 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:30:16 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ int	main(void)
 				-100.5, -1), 100));
 	// Camera
 	scene.camera->aspect_ratio = 16.0 / 9.0;
-	scene.camera->image_width = 1920;
+	scene.camera->image_width = 672;
 	scene.camera->samples_per_pixel = 100;
 	// Render
 	camera_render(scene.camera, scene.world);
