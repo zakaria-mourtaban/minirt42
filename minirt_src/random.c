@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3.h                                             :+:      :+:    :+:   */
+/*   random.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/05 23:32:04 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:33:44 by zmourtab         ###   ########.fr       */
+/*   Created: 2025/07/08 00:40:40 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/08 00:41:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VEC3_H
-# define VEC3_H
+#include "./includes/miniRT.h"
 
-# include "vec3_defs.h" // Include the definitions of t_vec3 and t_point3
-# include "vec3_ops.h"  // Include the operations defined in vec3_ops.h
-# include "vec3_ops2.h" // Include the operations defined in vec3_ops2
-# include "vec3_ops3.h" // Include the operations defined in vec3_ops3
-# include "vec3_ops4.h" // Include the operations defined in vec3_ops4
+double	random_double(void)
+{
+	return (rand() / (RAND_MAX + 1.0));
+}
 
-#endif
+double	random_double_range(double min, double max)
+{
+	return (min + (max - min) * random_double());
+}

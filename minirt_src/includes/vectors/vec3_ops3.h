@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 00:10:25 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/06 00:10:27 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:34:32 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,7 @@ static inline t_vec3	vec3_unit_vector(const t_vec3 *v)
 	len = vec3_length(v);
 	return (vec3_divide(v, len));
 }
+
+
 
 #endif

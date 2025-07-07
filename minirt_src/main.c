@@ -6,21 +6,11 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:30:16 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:53:53 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/miniRT.h"
-
-double	random_double(void)
-{
-	return (rand() / (RAND_MAX + 1.0));
-}
-
-double	random_double_range(double min, double max)
-{
-	return (min + (max - min) * random_double());
-}
 
 static int	color_to_int(t_color *color, int samples_per_pixel)
 {
@@ -42,19 +32,27 @@ static int	color_to_int(t_color *color, int samples_per_pixel)
 				* interval_clamp(&intensity, b))));
 }
 
-static t_color	ray_color(const t_ray *r, t_hittable_list *world)
+static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 {
 	t_hit_record	rec;
+	t_vec3			direction;
+	t_ray			new_ray;
 	t_color			final_color;
 	t_vec3			unit_dir;
 	double			a;
 	t_vec3			start_color;
 	t_vec3			end_color;
 
+	// If we've exceeded the ray bounce limit, no more light is gathered.
+	if (depth <= 0)
+		return (vec3_create(0, 0, 0));
 	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
 			&rec))
 	{
-		final_color = vec3_add(&rec.normal, &((t_vec3){{1, 1, 1}}));
+		direction = random_on_hemisphere(&rec.normal);
+		new_ray = ray_create(rec.p, direction);
+		// Note the new 'depth - 1' parameter in the recursive call
+		final_color = ray_color(&new_ray, world, depth - 1);
 		vec3_scale_inplace(&final_color, 0.5);
 		return (final_color);
 	}
@@ -64,8 +62,7 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world)
 	vec3_scale_inplace(&start_color, 1.0 - a);
 	end_color = vec3_create(0.5, 0.7, 1.0);
 	vec3_scale_inplace(&end_color, a);
-	final_color = vec3_add(&start_color, &end_color);
-	return (final_color);
+	return (vec3_add(&start_color, &end_color));
 }
 
 static t_vec3	sample_square(void)
@@ -135,6 +132,7 @@ void	camera_render(t_camera *cam, t_hittable_list *world)
 	t_ray	r;
 	t_color	sampled_color;
 
+	const int max_depth = 50; // Set the maximum recursion depth
 	camera_initialize(cam);
 	cam->mlx = mlx_init();
 	cam->win = mlx_new_window(cam->mlx, cam->image_width, cam->image_height,
@@ -153,7 +151,8 @@ void	camera_render(t_camera *cam, t_hittable_list *world)
 			for (int sample = 0; sample < cam->samples_per_pixel; ++sample)
 			{
 				r = get_ray(cam, i, j);
-				sampled_color = ray_color(&r, world);
+				// Pass the initial max_depth to the function
+				sampled_color = ray_color(&r, world, max_depth);
 				vec3_add_inplace(&pixel_color, &sampled_color);
 			}
 			dst = cam->image.buffer + (j * cam->image.line_bytes + i
@@ -192,7 +191,7 @@ int	main(void)
 				-100.5, -1), 100));
 	// Camera
 	scene.camera->aspect_ratio = 16.0 / 9.0;
-	scene.camera->image_width = 672;
+	scene.camera->image_width = 600;
 	scene.camera->samples_per_pixel = 100;
 	// Render
 	camera_render(scene.camera, scene.world);

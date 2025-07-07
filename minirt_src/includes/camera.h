@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:03:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:22:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:51:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "hittable.h"
 # include "hittable_list.h"
+# include "ray.h"
 
 /**
  * @struct t_image

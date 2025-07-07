@@ -1,6 +1,6 @@
 NAME = miniRT
 CFLAGS = -Wall -Werror -Wextra -g
-SRCS = minirt_src/main.c 
+SRCS = minirt_src/main.c minirt_src/random.c minirt_src/sphere.c minirt_src/hittable.c
 OBJS = $(SRCS:%.c=%.o)
 
 # Paths to ft_printf, libft, and MinilibX directories

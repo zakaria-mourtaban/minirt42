@@ -1,22 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3.h                                             :+:      :+:    :+:   */
+/*   hittable.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/05 23:32:04 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:33:44 by zmourtab         ###   ########.fr       */
+/*   Created: 2025/07/08 00:44:18 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/08 00:44:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VEC3_H
-# define VEC3_H
+#include "./includes/hittable.h"
+#include "./includes/ray.h" // Include the full ray definition here
 
-# include "vec3_defs.h" // Include the definitions of t_vec3 and t_point3
-# include "vec3_ops.h"  // Include the operations defined in vec3_ops.h
-# include "vec3_ops2.h" // Include the operations defined in vec3_ops2
-# include "vec3_ops3.h" // Include the operations defined in vec3_ops3
-# include "vec3_ops4.h" // Include the operations defined in vec3_ops4
-
-#endif
+void	set_face_normal(t_hit_record *rec, const t_ray *r,
+		const t_vec3 *outward_normal)
+{
+	rec->front_face = vec3_dot(&r->dir, outward_normal) < 0;
+	if (rec->front_face)
+		rec->normal = *outward_normal;
+	else
+		rec->normal = vec3_negate(outward_normal);
+}

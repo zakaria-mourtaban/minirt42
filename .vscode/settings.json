@@ -4,6 +4,8 @@
 		"libft.h": "c",
 		"vec3.h": "c",
 		"color.h": "c",
-		"math.h": "c"
+		"math.h": "c",
+		"ray.h": "c",
+		"hittable.h": "c"
 	}
 }

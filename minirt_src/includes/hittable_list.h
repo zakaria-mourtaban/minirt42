@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 23:43:07 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/07 23:58:29 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 00:45:55 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define HITTABLE_LIST_H
 
 # include "hittable.h"
+# include "ray.h"
 # include <stdbool.h>
 # include <stdlib.h>
 
