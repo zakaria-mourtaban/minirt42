@@ -1,5 +1,8 @@
 {
 	"files.associations": {
-		"minirt.h": "c"
+		"minirt.h": "c",
+		"libft.h": "c",
+		"vec3.h": "c",
+		"color.h": "c"
 	}
 }
