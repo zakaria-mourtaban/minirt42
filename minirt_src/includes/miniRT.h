@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 23:02:24 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/05 23:56:36 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/06 00:46:12 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,10 @@
 # include "../../minilibx/mlx.h"
 # include "../../libft/libft.h"
 # include "../../ft_printf/ft_printf.h"
-# include "vectors/vec3.h"
 
+# include "color.h"
+# include "vectors/vec3.h"
+# include "ray.h"
 # include "structs.h"
 
 # define WIDTH 1920
