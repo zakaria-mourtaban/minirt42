@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 23:32:04 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:33:44 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 01:13:55 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,4 +19,6 @@
 # include "vec3_ops3.h" // Include the operations defined in vec3_ops3
 # include "vec3_ops4.h" // Include the operations defined in vec3_ops4
 
+t_vec3	vec3_reflect(const t_vec3 *v, const t_vec3 *n);
+bool	vec3_near_zero(const t_vec3 *v);
 #endif

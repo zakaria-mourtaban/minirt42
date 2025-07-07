@@ -6,24 +6,27 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:42:37 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:43:17 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 01:13:36 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/ray.h"
 #include "./includes/sphere.h"
+#include "includes/sphere.h"
 #include <stdlib.h>
 
-t_sphere	*sphere_new(t_point3 center, double radius)
+// Update the sphere constructor
+t_sphere	*sphere_new(t_point3 center, double radius, t_material mat)
 {
 	t_sphere	*s;
 
-	s = (t_sphere *)malloc(sizeof(t_sphere));
+	s = malloc(sizeof(t_sphere));
 	if (!s)
 		return (NULL);
-	s->center = center;
-	s->radius = fmax(0, radius);
 	s->hittable.hit = sphere_hit;
+	s->center = center;
+	s->radius = radius;
+	s->mat = mat;
 	return (s);
 }
 
@@ -62,5 +65,6 @@ bool	sphere_hit(const t_hittable *self, const t_ray *r, t_interval ray_t,
 	sub_res = vec3_subtract(&rec->p, &s->center);
 	outward_normal = vec3_divide(&sub_res, s->radius);
 	set_face_normal(rec, r, &outward_normal);
+	rec->mat = &((t_sphere *)self)->mat;
 	return (true);
 }

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:42:25 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:51:14 by zmourtab         ###   ########.fr       */
+/*   Created: 2025/07/08 01:12:31 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/08 01:12:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define SPHERE_H
 
 # include "hittable.h"
-# include "ray.h"
+# include "material.h" // Include the new material header
 # include <math.h>
 
 typedef struct s_sphere
@@ -22,10 +22,11 @@ typedef struct s_sphere
 	t_hittable	hittable;
 	t_point3	center;
 	double		radius;
+	t_material mat; // Store the sphere's material
 }				t_sphere;
 
-// Function declarations (prototypes)
-t_sphere		*sphere_new(t_point3 center, double radius);
+// Update the constructor prototype
+t_sphere		*sphere_new(t_point3 center, double radius, t_material mat);
 bool			sphere_hit(const t_hittable *self, const t_ray *r,
 					t_interval ray_t, t_hit_record *rec);
 

@@ -6,6 +6,7 @@
 		"color.h": "c",
 		"math.h": "c",
 		"ray.h": "c",
-		"hittable.h": "c"
+		"hittable.h": "c",
+		"stdbool.h": "c"
 	}
 }

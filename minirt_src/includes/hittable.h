@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:44:05 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:44:09 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 01:12:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@
 // Forward declarations to break circular dependencies
 struct s_ray;
 struct s_hittable;
+struct s_material;
 
 typedef struct s_hit_record
 {
 	t_point3	p;
 	t_vec3		normal;
+	struct s_material	*mat; // Pointer to the material
 	double		t;
 	bool		front_face;
 }				t_hit_record;

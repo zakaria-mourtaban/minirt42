@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 01:07:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 01:30:38 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,13 @@ int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
 static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 {
 	t_hit_record	rec;
-	t_vec3			direction;
-	t_ray			new_ray;
-	t_color			final_color;
 	t_vec3			unit_dir;
 	double			a;
 	t_vec3			start_color;
 	t_vec3			end_color;
-	t_vec3			rand_unit_vec;
+	t_color			scattered_color;
+	t_ray			scattered;
+	t_color			attenuation;
 
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if (depth <= 0)
@@ -61,13 +60,13 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
 			&rec))
 	{
-		rand_unit_vec = random_unit_vector();
-		direction = vec3_add(&rec.normal, &rand_unit_vec);
-		new_ray = ray_create(rec.p, direction);
-		// Note the new 'depth - 1' parameter in the recursive call
-		final_color = ray_color(&new_ray, world, depth - 1);
-		vec3_scale_inplace(&final_color, 0.5);
-		return (final_color);
+		// Ask the material how the ray should scatter
+		if (rec.mat->scatter(rec.mat, r, &rec, &attenuation, &scattered))
+		{
+			scattered_color = ray_color(&scattered, world, depth - 1);
+			return (vec3_multiply_components(&attenuation, &scattered_color));
+		}
+		return (vec3_create(0, 0, 0)); // Ray was absorbed
 	}
 	unit_dir = vec3_unit_vector(&r->dir);
 	a = 0.5 * (unit_dir.e[1] + 1.0);
@@ -175,6 +174,7 @@ void	camera_render(t_camera *cam, t_hittable_list *world)
 		}
 	}
 	mlx_put_image_to_window(cam->mlx, cam->win, cam->image.img_ptr, 0, 0);
+	mlx_loop(cam->mlx);
 	ft_printf("\rDone.                 \n");
 }
 
@@ -193,27 +193,37 @@ int	key_hook(int keycode, t_scene *scene)
 
 int	main(void)
 {
-	t_scene	scene;
+	t_hittable_list	*world;
+	t_camera		cam;
+	t_material		material_ground;
+	t_material		material_center;
+	t_material		material_left;
+	t_material		material_right;
 
-	scene.camera = (t_camera *)malloc(sizeof(t_camera));
-	// World
-	scene.world = hittable_list_new(2);
-	hittable_list_add(scene.world, (t_hittable *)sphere_new(vec3_create(0, 0,
-				-1), 0.5));
-	hittable_list_add(scene.world, (t_hittable *)sphere_new(vec3_create(0,
-				-100.5, -1), 100));
-	// Camera
-	scene.camera->aspect_ratio = 16.0 / 9.0;
-	scene.camera->image_width = 900;
-	scene.camera->samples_per_pixel = 100;
-	// Render
-	camera_render(scene.camera, scene.world);
-	// Hooks
-	mlx_hook(scene.camera->win, 2, 1L << 0, key_hook, &scene);
-	mlx_loop(scene.camera->mlx);
+	world = hittable_list_new(4);
+	// Define materials
+	material_ground = material_new_lambertian(&(t_color){{0.8, 0.8, 0.0}});
+	material_center = material_new_lambertian(&(t_color){{0.1, 0.2, 0.5}});
+	material_left = material_new_metal(&(t_color){{0.8, 0.8, 0.8}}, 0.3);
+	material_right = material_new_metal(&(t_color){{0.8, 0.6, 0.2}}, 1.0);
+	// Add spheres with their materials to the world
+	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{0.0, -100.5,
+			-1.0}}, 100.0, material_ground));
+	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{0.0, 0.0,
+			-1.0}}, 0.5, material_center));
+	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{-1.0, 0.0,
+			-1.0}}, 0.5, material_left));
+	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{1.0, 0.0,
+			-1.0}}, 0.5, material_right));
+	// Camera setup
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 800;
+	cam.samples_per_pixel = 100;
+	// Render the scene
+	camera_render(&cam, world);
+	hittable_list_free(world);
 	return (0);
 }
-
 // Hittable list implementation...
 bool	hittable_list_hit(const t_hittable *self, const t_ray *r,
 		t_interval ray_t, t_hit_record *rec)
