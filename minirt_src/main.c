@@ -6,27 +6,38 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:53:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 01:07:45 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/miniRT.h"
 
-static int	color_to_int(t_color *color, int samples_per_pixel)
+static double	linear_to_gamma(double linear_component)
 {
-	double					r;
-	double					g;
-	double					b;
-	double					scale;
-	static const t_interval	intensity = {0.000, 0.999};
+	if (linear_component > 0)
+		return (sqrt(linear_component));
+	return (0);
+}
 
-	r = color->e[0];
-	g = color->e[1];
-	b = color->e[2];
+int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
+{
+	double				r;
+	double				g;
+	double				b;
+	double				scale;
+	t_color				scaled_pixel;
+	const t_interval	intensity = interval_new(0.000, 0.999);
+
+	scaled_pixel = *pixel_color;
 	scale = 1.0 / samples_per_pixel;
-	r *= scale;
-	g *= scale;
-	b *= scale;
+	vec3_scale_inplace(&scaled_pixel, scale);
+	r = scaled_pixel.e[0];
+	g = scaled_pixel.e[1];
+	b = scaled_pixel.e[2];
+	// Apply the gamma correction to each component
+	r = linear_to_gamma(r);
+	g = linear_to_gamma(g);
+	b = linear_to_gamma(b);
 	return (((int)(256 * interval_clamp(&intensity, r))) << 16 | ((int)(256
 				* interval_clamp(&intensity, g))) << 8 | ((int)(256
 				* interval_clamp(&intensity, b))));
@@ -42,6 +53,7 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 	double			a;
 	t_vec3			start_color;
 	t_vec3			end_color;
+	t_vec3			rand_unit_vec;
 
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if (depth <= 0)
@@ -49,7 +61,8 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
 			&rec))
 	{
-		direction = random_on_hemisphere(&rec.normal);
+		rand_unit_vec = random_unit_vector();
+		direction = vec3_add(&rec.normal, &rand_unit_vec);
 		new_ray = ray_create(rec.p, direction);
 		// Note the new 'depth - 1' parameter in the recursive call
 		final_color = ray_color(&new_ray, world, depth - 1);
@@ -191,7 +204,7 @@ int	main(void)
 				-100.5, -1), 100));
 	// Camera
 	scene.camera->aspect_ratio = 16.0 / 9.0;
-	scene.camera->image_width = 600;
+	scene.camera->image_width = 900;
 	scene.camera->samples_per_pixel = 100;
 	// Render
 	camera_render(scene.camera, scene.world);
