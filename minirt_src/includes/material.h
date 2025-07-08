@@ -19,27 +19,22 @@
 # include "vectors/vec3.h"
 # include <stdbool.h>
 
-// Forward declaration to break circular dependency
 struct s_hit_record;
 
-// The base material structure
 typedef struct s_material
 {
-	// Scatter function pointer
 	bool	(*scatter)(const struct s_material *self, const t_ray *r_in,
 			const struct s_hit_record *rec, t_color *attenuation,
 			t_ray *scattered);
 	t_color	albedo;
-	double fuzz; // For metal fuzziness
-}			t_material;
+	double	fuzz;
+} t_material;
 
-// Lambertian (diffuse) material
 bool		lambertian_scatter(const t_material *self, const t_ray *r_in,
 				const struct s_hit_record *rec, t_color *attenuation,
 				t_ray *scattered);
 t_material	material_new_lambertian(const t_color *albedo);
 
-// Metal (reflective) material
 bool		metal_scatter(const t_material *self, const t_ray *r_in,
 				const struct s_hit_record *rec, t_color *attenuation,
 				t_ray *scattered);

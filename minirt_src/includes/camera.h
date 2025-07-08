@@ -17,10 +17,7 @@
 # include "hittable_list.h"
 # include "ray.h"
 
-/**
- * @struct t_image
- * @brief Holds the image buffer and its properties.
- */
+// Holds the image buffer and its properties.
 typedef struct s_image
 {
 	void		*img_ptr;
@@ -28,12 +25,9 @@ typedef struct s_image
 	int			pixel_bits;
 	int			line_bytes;
 	int			endian;
-}				t_image;
+} t_image;
 
-/**
- * @struct t_camera
- * @brief Manages rendering parameters and the main render loop.
- */
+// Manages rendering parameters and the main render loop.
 typedef struct s_camera
 {
 	// Public parameters
@@ -53,7 +47,7 @@ typedef struct s_camera
 	void		*mlx;
 	void		*win;
 	t_image		image;
-}				t_camera;
+} t_camera;
 
 void			camera_render(t_camera *cam, t_hittable_list *world);
 t_ray			get_ray(t_camera *cam, int i, int j);

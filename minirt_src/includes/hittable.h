@@ -14,10 +14,9 @@
 # define HITTABLE_H
 
 # include "interval.h"
-# include "vectors/vec3.h" // Keep this for t_vec3
+# include "vectors/vec3.h"
 # include <stdbool.h>
 
-// Forward declarations to break circular dependencies
 struct s_ray;
 struct s_hittable;
 struct s_material;
@@ -26,12 +25,12 @@ typedef struct s_hit_record
 {
 	t_point3	p;
 	t_vec3		normal;
-	struct s_material	*mat; // Pointer to the material
+	struct s_material	*mat;
 	double		t;
 	bool		front_face;
-}				t_hit_record;
+} t_hit_record;
 
-// Function Prototypes
+
 void			set_face_normal(t_hit_record *rec, const struct s_ray *r,
 					const t_vec3 *outward_normal);
 

@@ -14,7 +14,7 @@
 # define SPHERE_H
 
 # include "hittable.h"
-# include "material.h" // Include the new material header
+# include "material.h"
 # include <math.h>
 
 typedef struct s_sphere
@@ -22,10 +22,9 @@ typedef struct s_sphere
 	t_hittable	hittable;
 	t_point3	center;
 	double		radius;
-	t_material mat; // Store the sphere's material
-}				t_sphere;
+	t_material	mat;
+} t_sphere;
 
-// Update the constructor prototype
 t_sphere		*sphere_new(t_point3 center, double radius, t_material mat);
 bool			sphere_hit(const t_hittable *self, const t_ray *r,
 					t_interval ray_t, t_hit_record *rec);

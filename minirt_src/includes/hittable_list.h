@@ -24,9 +24,8 @@ typedef struct s_hittable_list
 	t_hittable	**objects;
 	int			size;
 	int			capacity;
-}				t_hittable_list;
+} t_hittable_list;
 
-// Function prototypes
 t_hittable_list	*hittable_list_new(int capacity);
 void			hittable_list_add(t_hittable_list *list, t_hittable *object);
 void			hittable_list_clear(t_hittable_list *list);

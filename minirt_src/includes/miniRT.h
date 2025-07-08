@@ -20,6 +20,7 @@
 # include "color.h"
 # include "hittable_list.h"
 # include "interval.h"
+# include "random.h"
 # include "ray.h"
 # include "sphere.h"
 # include "structs.h"
@@ -28,9 +29,6 @@
 # include <math.h>
 # include <stdlib.h>
 # include <unistd.h>
-
-double	random_double(void);
-double	random_double_range(double min, double max);
 
 # define WIDTH 1920
 # define HEIGHT 1080

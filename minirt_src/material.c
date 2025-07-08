@@ -12,6 +12,7 @@
 
 #include "includes/miniRT.h"
 #include "includes/vectors/vec3.h"
+#include "includes/random.h"
 
 // Lambertian scatter logic
 bool	lambertian_scatter(const t_material *self, const t_ray *r_in,
@@ -20,10 +21,9 @@ bool	lambertian_scatter(const t_material *self, const t_ray *r_in,
 	t_vec3	scatter_direction;
 	t_vec3	rand_unit;
 
-	(void)r_in; // Unused parameter
+	(void)r_in;
 	rand_unit = random_unit_vector();
 	scatter_direction = vec3_add(&rec->normal, &rand_unit);
-	// Catch degenerate scatter direction
 	if (vec3_near_zero(&scatter_direction))
 		scatter_direction = rec->normal;
 	*scattered = ray_create(rec->p, scatter_direction);
@@ -31,7 +31,6 @@ bool	lambertian_scatter(const t_material *self, const t_ray *r_in,
 	return (true);
 }
 
-// Metal scatter logic
 bool	metal_scatter(const t_material *self, const t_ray *r_in,
 		const struct s_hit_record *rec, t_color *attenuation, t_ray *scattered)
 {
@@ -48,7 +47,6 @@ bool	metal_scatter(const t_material *self, const t_ray *r_in,
 	return (vec3_dot(&scattered->dir, &rec->normal) > 0);
 }
 
-// Constructors for materials
 t_material	material_new_lambertian(const t_color *albedo)
 {
 	t_material	mat;
@@ -61,12 +59,14 @@ t_material	material_new_lambertian(const t_color *albedo)
 
 t_material	material_new_metal(const t_color *albedo, double fuzz)
 {
-	t_material mat;
+	t_material	mat;
+	double		fuzz_val;
 
 	mat.scatter = metal_scatter;
 	mat.albedo = *albedo;
-	if (fuzz < 1)
-		mat.fuzz = fuzz;
+	fuzz_val = fuzz;
+	if (fuzz_val < 1)
+		mat.fuzz = fuzz_val;
 	else
 		mat.fuzz = 1;
 	return (mat);

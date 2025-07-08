@@ -11,11 +11,9 @@
 /* ************************************************************************** */
 
 #include "./includes/ray.h"
-#include "./includes/sphere.h"
 #include "includes/sphere.h"
 #include <stdlib.h>
 
-// Update the sphere constructor
 t_sphere	*sphere_new(t_point3 center, double radius, t_material mat)
 {
 	t_sphere	*s;
@@ -33,16 +31,16 @@ t_sphere	*sphere_new(t_point3 center, double radius, t_material mat)
 bool	sphere_hit(const t_hittable *self, const t_ray *r, t_interval ray_t,
 		t_hit_record *rec)
 {
-	t_sphere *s;
-	t_vec3 oc;
-	double a;
-	double h;
-	double c;
-	double discriminant;
-	double root;
-	double sqrtd;
-	t_vec3 outward_normal;
-	t_vec3 sub_res;
+	t_sphere	*s;
+	t_vec3		oc;
+	double		a;
+	double		h;
+	double		c;
+	double		discriminant;
+	double		root;
+	double		sqrtd;
+	t_vec3		outward_normal;
+	t_vec3		sub_res;
 
 	s = (t_sphere *)self;
 	oc = vec3_subtract(&s->center, &r->orig);

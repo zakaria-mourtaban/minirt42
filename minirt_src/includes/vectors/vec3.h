@@ -6,18 +6,18 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 23:32:04 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 01:13:55 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/08 04:12:47 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VEC3_H
 # define VEC3_H
 
+# include <stdbool.h>
 # include "vec3_defs.h" // Include the definitions of t_vec3 and t_point3
 # include "vec3_ops.h"  // Include the operations defined in vec3_ops.h
 # include "vec3_ops2.h" // Include the operations defined in vec3_ops2
-# include "vec3_ops3.h" // Include the operations defined in vec3_ops3
-# include "vec3_ops4.h" // Include the operations defined in vec3_ops4
+# include "vec3_ops3.h"
 
 t_vec3	vec3_reflect(const t_vec3 *v, const t_vec3 *n);
 bool	vec3_near_zero(const t_vec3 *v);

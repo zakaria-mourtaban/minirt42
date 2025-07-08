@@ -12,6 +12,8 @@
 
 #include "includes/miniRT.h"
 
+static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth);
+
 static double	linear_to_gamma(double linear_component)
 {
 	if (linear_component > 0)
@@ -21,12 +23,15 @@ static double	linear_to_gamma(double linear_component)
 
 int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
 {
-	double				r;
-	double				g;
-	double				b;
-	double				scale;
-	t_color				scaled_pixel;
+	double			r;
+	double			g;
+	double			b;
+	double			scale;
+	t_color			scaled_pixel;
 	const t_interval	intensity = interval_new(0.000, 0.999);
+	int				r_int;
+	int				g_int;
+	int				b_int;
 
 	scaled_pixel = *pixel_color;
 	scale = 1.0 / samples_per_pixel;
@@ -34,40 +39,37 @@ int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
 	r = scaled_pixel.e[0];
 	g = scaled_pixel.e[1];
 	b = scaled_pixel.e[2];
-	// Apply the gamma correction to each component
 	r = linear_to_gamma(r);
 	g = linear_to_gamma(g);
 	b = linear_to_gamma(b);
-	return (((int)(256 * interval_clamp(&intensity, r))) << 16 | ((int)(256
-				* interval_clamp(&intensity, g))) << 8 | ((int)(256
-				* interval_clamp(&intensity, b))));
+	r_int = (int)(256 * interval_clamp(&intensity, r));
+	g_int = (int)(256 * interval_clamp(&intensity, g));
+	b_int = (int)(256 * interval_clamp(&intensity, b));
+	return ((r_int << 16) | (g_int << 8) | b_int);
 }
 
-static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
+static t_color	ray_color_scattered(const t_ray *r, t_hittable_list *world, int depth,
+				t_hit_record *rec)
 {
-	t_hit_record	rec;
-	t_vec3			unit_dir;
-	double			a;
-	t_vec3			start_color;
-	t_vec3			end_color;
 	t_color			scattered_color;
 	t_ray			scattered;
 	t_color			attenuation;
 
-	// If we've exceeded the ray bounce limit, no more light is gathered.
-	if (depth <= 0)
-		return (vec3_create(0, 0, 0));
-	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
-			&rec))
+	if (rec->mat->scatter(rec->mat, r, rec, &attenuation, &scattered))
 	{
-		// Ask the material how the ray should scatter
-		if (rec.mat->scatter(rec.mat, r, &rec, &attenuation, &scattered))
-		{
-			scattered_color = ray_color(&scattered, world, depth - 1);
-			return (vec3_multiply_components(&attenuation, &scattered_color));
-		}
-		return (vec3_create(0, 0, 0)); // Ray was absorbed
+		scattered_color = ray_color(&scattered, world, depth - 1);
+		return (vec3_multiply_components(&attenuation, &scattered_color));
 	}
+	return (vec3_create(0, 0, 0));
+}
+
+static t_color	ray_color_background(const t_ray *r)
+{
+	t_vec3		unit_dir;
+	double		a;
+	t_vec3		start_color;
+	t_vec3		end_color;
+
 	unit_dir = vec3_unit_vector(&r->dir);
 	a = 0.5 * (unit_dir.e[1] + 1.0);
 	start_color = vec3_create(1.0, 1.0, 1.0);
@@ -75,6 +77,20 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 	end_color = vec3_create(0.5, 0.7, 1.0);
 	vec3_scale_inplace(&end_color, a);
 	return (vec3_add(&start_color, &end_color));
+}
+
+static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
+{
+	t_hit_record	rec;
+
+	if (depth <= 0)
+		return (vec3_create(0, 0, 0));
+	if (hittable_list_hit((t_hittable *)world, r, interval_new(0.001, INFINITY),
+			&rec))
+	{
+		return (ray_color_scattered(r, world, depth, &rec));
+	}
+	return (ray_color_background(r));
 }
 
 static t_vec3	sample_square(void)
@@ -137,14 +153,51 @@ static void	camera_initialize(t_camera *cam)
 	cam->pixel00_loc = viewport_upper_left;
 }
 
-void	camera_render(t_camera *cam, t_hittable_list *world)
+static t_color	render_pixel(t_camera *cam, int i, int j, t_hittable_list *world,
+			int max_depth)
 {
-	char	*dst;
 	t_color	pixel_color;
 	t_ray	r;
 	t_color	sampled_color;
+	int		sample;
 
-	const int max_depth = 50; // Set the maximum recursion depth
+	pixel_color = vec3_create(0, 0, 0);
+	sample = 0;
+	while (sample < cam->samples_per_pixel)
+	{
+		r = get_ray(cam, i, j);
+		sampled_color = ray_color(&r, world, max_depth);
+		vec3_add_inplace(&pixel_color, &sampled_color);
+		sample++;
+	}
+	return (pixel_color);
+}
+
+static void	render_scanline(t_camera *cam, int j, t_hittable_list *world,
+			int max_depth)
+{
+	char	*dst;
+	t_color	pixel_color;
+	int		i;
+
+	ft_printf("\rScanlines remaining: %d ", (cam->image_height - j));
+	i = 0;
+	while (i < cam->image_width)
+	{
+		pixel_color = render_pixel(cam, i, j, world, max_depth);
+		dst = cam->image.buffer + (j * cam->image.line_bytes + i
+				* (cam->image.pixel_bits / 8));
+		*(unsigned int *)dst = color_to_int(&pixel_color,
+				cam->samples_per_pixel);
+		i++;
+	}
+}
+
+void	camera_render(t_camera *cam, t_hittable_list *world)
+{
+	const int	max_depth = 50;
+	int		j;
+
 	camera_initialize(cam);
 	cam->mlx = mlx_init();
 	cam->win = mlx_new_window(cam->mlx, cam->image_width, cam->image_height,
@@ -154,24 +207,11 @@ void	camera_render(t_camera *cam, t_hittable_list *world)
 	cam->image.buffer = mlx_get_data_addr(cam->image.img_ptr,
 			&cam->image.pixel_bits, &cam->image.line_bytes, &cam->image.endian);
 	ft_printf("P3\n%d %d\n255\n", cam->image_width, cam->image_height);
-	for (int j = 0; j < cam->image_height; ++j)
+	j = 0;
+	while (j < cam->image_height)
 	{
-		ft_printf("\rScanlines remaining: %d ", (cam->image_height - j));
-		for (int i = 0; i < cam->image_width; ++i)
-		{
-			pixel_color = vec3_create(0, 0, 0);
-			for (int sample = 0; sample < cam->samples_per_pixel; ++sample)
-			{
-				r = get_ray(cam, i, j);
-				// Pass the initial max_depth to the function
-				sampled_color = ray_color(&r, world, max_depth);
-				vec3_add_inplace(&pixel_color, &sampled_color);
-			}
-			dst = cam->image.buffer + (j * cam->image.line_bytes + i
-					* (cam->image.pixel_bits / 8));
-			*(unsigned int *)dst = color_to_int(&pixel_color,
-					cam->samples_per_pixel);
-		}
+		render_scanline(cam, j, world, max_depth);
+		j++;
 	}
 	mlx_put_image_to_window(cam->mlx, cam->win, cam->image.img_ptr, 0, 0);
 	mlx_loop(cam->mlx);
@@ -191,105 +231,38 @@ int	key_hook(int keycode, t_scene *scene)
 	return (0);
 }
 
-int	main(void)
+static void	initialize_world(t_hittable_list **world)
 {
-	t_hittable_list	*world;
-	t_camera		cam;
-	t_material		material_ground;
-	t_material		material_center;
-	t_material		material_left;
-	t_material		material_right;
+	t_material	material_ground;
+	t_material	material_center;
+	t_material	material_left;
+	t_material	material_right;
 
-	world = hittable_list_new(4);
-	// Define materials
+	*world = hittable_list_new(4);
 	material_ground = material_new_lambertian(&(t_color){{0.8, 0.8, 0.0}});
 	material_center = material_new_lambertian(&(t_color){{0.1, 0.2, 0.5}});
 	material_left = material_new_metal(&(t_color){{0.8, 0.8, 0.8}}, 0.3);
 	material_right = material_new_metal(&(t_color){{0.8, 0.6, 0.2}}, 1.0);
-	// Add spheres with their materials to the world
-	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{0.0, -100.5,
+	hittable_list_add(*world, (t_hittable *)sphere_new((t_point3){{0.0, -100.5,
 			-1.0}}, 100.0, material_ground));
-	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{0.0, 0.0,
+	hittable_list_add(*world, (t_hittable *)sphere_new((t_point3){{0.0, 0.0,
 			-1.0}}, 0.5, material_center));
-	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{-1.0, 0.0,
+	hittable_list_add(*world, (t_hittable *)sphere_new((t_point3){{-1.0, 0.0,
 			-1.0}}, 0.5, material_left));
-	hittable_list_add(world, (t_hittable *)sphere_new((t_point3){{1.0, 0.0,
+	hittable_list_add(*world, (t_hittable *)sphere_new((t_point3){{1.0, 0.0,
 			-1.0}}, 0.5, material_right));
-	// Camera setup
+}
+
+int	main(void)
+{
+	t_hittable_list	*world;
+	t_camera		cam;
+
+	initialize_world(&world);
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 800;
 	cam.samples_per_pixel = 100;
-	// Render the scene
 	camera_render(&cam, world);
 	hittable_list_free(world);
 	return (0);
-}
-// Hittable list implementation...
-bool	hittable_list_hit(const t_hittable *self, const t_ray *r,
-		t_interval ray_t, t_hit_record *rec)
-{
-	t_hittable_list	*list;
-	t_hit_record	temp_rec;
-	bool			hit_anything;
-	double			closest_so_far;
-	int				i;
-
-	list = (t_hittable_list *)self;
-	hit_anything = false;
-	closest_so_far = ray_t.max;
-	i = 0;
-	while (i < list->size)
-	{
-		if (list->objects[i]->hit(list->objects[i], r, interval_new(ray_t.min,
-					closest_so_far), &temp_rec))
-		{
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			*rec = temp_rec;
-		}
-		i++;
-	}
-	return (hit_anything);
-}
-
-t_hittable_list	*hittable_list_new(int capacity)
-{
-	t_hittable_list	*list;
-
-	list = (t_hittable_list *)malloc(sizeof(t_hittable_list));
-	if (!list)
-		return (NULL);
-	list->objects = (t_hittable **)malloc(sizeof(t_hittable *) * capacity);
-	if (!list->objects)
-	{
-		free(list);
-		return (NULL);
-	}
-	list->size = 0;
-	list->capacity = capacity;
-	list->hittable.hit = hittable_list_hit;
-	return (list);
-}
-
-void	hittable_list_add(t_hittable_list *list, t_hittable *object)
-{
-	if (list->size < list->capacity)
-		list->objects[list->size++] = object;
-}
-
-void	hittable_list_clear(t_hittable_list *list)
-{
-	int	i;
-
-	i = 0;
-	while (i < list->size)
-		free(list->objects[i++]);
-	list->size = 0;
-}
-
-void	hittable_list_free(t_hittable_list *list)
-{
-	hittable_list_clear(list);
-	free(list->objects);
-	free(list);
 }

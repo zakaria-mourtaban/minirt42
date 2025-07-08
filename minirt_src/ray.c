@@ -1,24 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vec3_ops.h                                         :+:      :+:    :+:   */
+/*   ray.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/06 00:09:55 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:29:16 by zmourtab         ###   ########.fr       */
+/*   Created: 2025/07/08 01:40:00 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/08 01:40:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef VEC3_OPS_H
-# define VEC3_OPS_H
+#include "includes/ray.h"
+#include "includes/vectors/vec3.h"
 
-# include "vec3_defs.h"
+t_ray	ray_create(const t_point3 origin, const t_vec3 direction)
+{
+	t_ray	r;
 
-t_vec3	vec3_negate(const t_vec3 *v);
-void	vec3_add_inplace(t_vec3 *u, const t_vec3 *v);
-void	vec3_scale_inplace(t_vec3 *v, double t);
-void	vec3_divide_inplace(t_vec3 *v, double t);
-double	vec3_length_squared(const t_vec3 *v);
+	r.orig = origin;
+	r.dir = direction;
+	return (r);
+}
 
-#endif
+t_point3	ray_at(const t_ray *r, double t)
+{
+	t_vec3	scaled_dir;
+	t_vec3	result;
+
+	scaled_dir = vec3_scale(&r->dir, t);
+	result = vec3_add(&r->orig, &scaled_dir);
+	return (result);
+}
