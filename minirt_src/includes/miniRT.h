@@ -25,6 +25,7 @@
 # include "sphere.h"
 # include "structs.h"
 # include "vectors/vec3.h"
+# include "utils.h"
 # include <fcntl.h>
 # include <math.h>
 # include <stdlib.h>

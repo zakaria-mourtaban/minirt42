@@ -6,13 +6,14 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 01:30:38 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:26:48 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/miniRT.h"
 
 static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth);
+void	initialize_camera(t_camera *camera);
 
 static double	linear_to_gamma(double linear_component)
 {
@@ -23,15 +24,15 @@ static double	linear_to_gamma(double linear_component)
 
 int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
 {
-	double			r;
-	double			g;
-	double			b;
-	double			scale;
-	t_color			scaled_pixel;
+	double				r;
+	double				g;
+	double				b;
+	double				scale;
+	t_color				scaled_pixel;
 	const t_interval	intensity = interval_new(0.000, 0.999);
-	int				r_int;
-	int				g_int;
-	int				b_int;
+	int					r_int;
+	int					g_int;
+	int					b_int;
 
 	scaled_pixel = *pixel_color;
 	scale = 1.0 / samples_per_pixel;
@@ -48,12 +49,12 @@ int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
 	return ((r_int << 16) | (g_int << 8) | b_int);
 }
 
-static t_color	ray_color_scattered(const t_ray *r, t_hittable_list *world, int depth,
-				t_hit_record *rec)
+static t_color	ray_color_scattered(const t_ray *r, t_hittable_list *world,
+		int depth, t_hit_record *rec)
 {
-	t_color			scattered_color;
-	t_ray			scattered;
-	t_color			attenuation;
+	t_color	scattered_color;
+	t_ray	scattered;
+	t_color	attenuation;
 
 	if (rec->mat->scatter(rec->mat, r, rec, &attenuation, &scattered))
 	{
@@ -65,10 +66,10 @@ static t_color	ray_color_scattered(const t_ray *r, t_hittable_list *world, int d
 
 static t_color	ray_color_background(const t_ray *r)
 {
-	t_vec3		unit_dir;
-	double		a;
-	t_vec3		start_color;
-	t_vec3		end_color;
+	t_vec3	unit_dir;
+	double	a;
+	t_vec3	start_color;
+	t_vec3	end_color;
 
 	unit_dir = vec3_unit_vector(&r->dir);
 	a = 0.5 * (unit_dir.e[1] + 1.0);
@@ -95,7 +96,6 @@ static t_color	ray_color(const t_ray *r, t_hittable_list *world, int depth)
 
 static t_vec3	sample_square(void)
 {
-	// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 	return (vec3_create(random_double() - 0.5, random_double() - 0.5, 0));
 }
 t_ray	get_ray(t_camera *cam, int i, int j)
@@ -107,8 +107,6 @@ t_ray	get_ray(t_camera *cam, int i, int j)
 	t_point3	ray_origin;
 	t_vec3		ray_direction;
 
-	// Construct a camera ray originating from the origin and directed at randomly sampled
-	// point around the pixel location i, j.
 	offset = sample_square();
 	pixel_sample = cam->pixel00_loc;
 	scaled_delta_u = vec3_scale(&cam->pixel_delta_u, i + offset.e[0]);
@@ -120,41 +118,53 @@ t_ray	get_ray(t_camera *cam, int i, int j)
 	return (ray_create(ray_origin, ray_direction));
 }
 
-static void	camera_initialize(t_camera *cam)
+void	initialize_camera(t_camera *camera)
 {
-	double	focal_length;
-	double	viewport_height;
-	double	viewport_width;
-	t_vec3	viewport_u;
-	t_vec3	viewport_v;
-	t_vec3	viewport_upper_left;
-	t_vec3	half_u;
-	t_vec3	half_v;
+	double		h;
+	double		theta;
+	double		focal_length;
+	t_vec3		viewport_u;
+	t_vec3		viewport_v;
+	double		viewport_height;
+	double		viewport_width;
+	t_point3	viewport_upper_left;
+	t_vec3		temp_vec;
+	t_vec3		temp_vec2;
+	t_vec3		temp_vec3;
 
-	cam->image_height = (int)(cam->image_width / cam->aspect_ratio);
-	if (cam->image_height < 1)
-		cam->image_height = 1;
-	cam->pixel_samples_scale = 1.0 / cam->samples_per_pixel;
-	cam->center = vec3_create(0, 0, 0);
-	focal_length = 1.0;
-	viewport_height = 2.0;
-	viewport_width = viewport_height * ((double)cam->image_width
-			/ cam->image_height);
-	viewport_u = vec3_create(viewport_width, 0, 0);
-	viewport_v = vec3_create(0, -viewport_height, 0);
-	cam->pixel_delta_u = vec3_divide(&viewport_u, cam->image_width);
-	cam->pixel_delta_v = vec3_divide(&viewport_v, cam->image_height);
-	viewport_upper_left = vec3_subtract(&cam->center, &((t_vec3){{0, 0,
-				focal_length}}));
-	half_u = vec3_divide(&viewport_u, 2.0);
-	half_v = vec3_divide(&viewport_v, 2.0);
-	vec3_subtract_inplace(&viewport_upper_left, &half_u);
-	vec3_subtract_inplace(&viewport_upper_left, &half_v);
-	cam->pixel00_loc = viewport_upper_left;
+	camera->image_height = camera->image_width / camera->aspect_ratio;
+	if (camera->image_height < 1)
+		camera->image_height = 1;
+	camera->center = camera->lookfrom;
+	temp_vec = vec3_subtract(&camera->lookfrom, &camera->lookat);
+	focal_length = vec3_length(&temp_vec);
+	theta = degrees_to_radians(camera->vfov);
+	h = tan(theta / 2.0);
+	viewport_height = 2.0 * h * focal_length;
+	viewport_width = viewport_height * ((double)camera->image_width
+			/ camera->image_height);
+	temp_vec = vec3_subtract(&camera->lookfrom, &camera->lookat);
+	camera->w = vec3_unit(temp_vec);
+	temp_vec = vec3_cross(&camera->vup, &camera->w);
+	camera->u = vec3_unit(temp_vec);
+	camera->v = vec3_cross(&camera->w, &camera->u);
+	viewport_u = vec3_scale(&camera->u, viewport_width);
+	viewport_v = vec3_scale(&camera->v, -viewport_height);
+	camera->pixel_delta_u = vec3_divide(&viewport_u, camera->image_width);
+	camera->pixel_delta_v = vec3_divide(&viewport_v, camera->image_height);
+	temp_vec = vec3_scale(&camera->w, focal_length);
+	viewport_upper_left = vec3_subtract(&camera->center, &temp_vec);
+	temp_vec2 = vec3_divide(&viewport_u, 2);
+	viewport_upper_left = vec3_subtract(&viewport_upper_left, &temp_vec2);
+	temp_vec3 = vec3_divide(&viewport_v, 2);
+	viewport_upper_left = vec3_subtract(&viewport_upper_left, &temp_vec3);
+	temp_vec = vec3_add(&camera->pixel_delta_u, &camera->pixel_delta_v);
+	temp_vec2 = vec3_scale(&temp_vec, 0.5);
+	camera->pixel00_loc = vec3_add(&viewport_upper_left, &temp_vec2);
 }
 
-static t_color	render_pixel(t_camera *cam, int i, int j, t_hittable_list *world,
-			int max_depth)
+static t_color	render_pixel(t_camera *cam, int i, int j,
+		t_hittable_list *world, int max_depth)
 {
 	t_color	pixel_color;
 	t_ray	r;
@@ -174,7 +184,7 @@ static t_color	render_pixel(t_camera *cam, int i, int j, t_hittable_list *world,
 }
 
 static void	render_scanline(t_camera *cam, int j, t_hittable_list *world,
-			int max_depth)
+		int max_depth)
 {
 	char	*dst;
 	t_color	pixel_color;
@@ -196,9 +206,9 @@ static void	render_scanline(t_camera *cam, int j, t_hittable_list *world,
 void	camera_render(t_camera *cam, t_hittable_list *world)
 {
 	const int	max_depth = 50;
-	int		j;
+	int			j;
 
-	camera_initialize(cam);
+	initialize_camera(cam);
 	cam->mlx = mlx_init();
 	cam->win = mlx_new_window(cam->mlx, cam->image_width, cam->image_height,
 			"miniRT");
@@ -217,8 +227,6 @@ void	camera_render(t_camera *cam, t_hittable_list *world)
 	mlx_loop(cam->mlx);
 	ft_printf("\rDone.                 \n");
 }
-
-// --- Main Program and Hooks ---
 
 int	key_hook(int keycode, t_scene *scene)
 {
@@ -262,6 +270,10 @@ int	main(void)
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 800;
 	cam.samples_per_pixel = 100;
+	cam.vfov = 90;
+	cam.lookfrom = vec3_create(-2, 2, 1);
+	cam.lookat = vec3_create(0, 0, -1);
+	cam.vup = vec3_create(0, 1, 0);
 	camera_render(&cam, world);
 	hittable_list_free(world);
 	return (0);

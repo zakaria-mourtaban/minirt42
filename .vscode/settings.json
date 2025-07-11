@@ -7,6 +7,9 @@
 		"math.h": "c",
 		"ray.h": "c",
 		"hittable.h": "c",
-		"stdbool.h": "c"
+		"stdbool.h": "c",
+		"vec3_defs.h": "c",
+		"vec3_ops.h": "c",
+		"vec3_ops3.h": "c"
 	}
 }

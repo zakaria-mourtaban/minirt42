@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:44:05 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 01:12:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 09:58:06 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,22 @@ struct s_material;
 
 typedef struct s_hit_record
 {
-	t_point3	p;
-	t_vec3		normal;
+	t_point3			p;
+	t_vec3				normal;
 	struct s_material	*mat;
-	double		t;
-	bool		front_face;
-} t_hit_record;
+	double				t;
+	bool				front_face;
+}						t_hit_record;
 
-
-void			set_face_normal(t_hit_record *rec, const struct s_ray *r,
-					const t_vec3 *outward_normal);
+void					set_face_normal(t_hit_record *rec,
+							const struct s_ray *r,
+							const t_vec3 *outward_normal);
 
 typedef struct s_hittable
 {
-	bool		(*hit)(const struct s_hittable *self, const struct s_ray *r,
-				t_interval ray_t, t_hit_record *rec);
-}				t_hittable;
+	bool				(*hit)(const struct s_hittable *self,
+						const struct s_ray *r, t_interval ray_t,
+						t_hit_record *rec);
+}						t_hittable;
 
 #endif

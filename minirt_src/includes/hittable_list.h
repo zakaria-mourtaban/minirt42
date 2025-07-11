@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 23:43:07 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:45:55 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 09:54:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct s_hittable_list
 	t_hittable	**objects;
 	int			size;
 	int			capacity;
-} t_hittable_list;
+}				t_hittable_list;
 
 t_hittable_list	*hittable_list_new(int capacity);
 void			hittable_list_add(t_hittable_list *list, t_hittable *object);

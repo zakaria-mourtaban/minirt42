@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:03:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/08 00:51:27 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:16:04 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,29 +25,32 @@ typedef struct s_image
 	int			pixel_bits;
 	int			line_bytes;
 	int			endian;
-} t_image;
+}				t_image;
 
-// Manages rendering parameters and the main render loop.
 typedef struct s_camera
 {
-	// Public parameters
 	double		aspect_ratio;
 	int			image_width;
+	double		vfov;
+	t_vec3		lookfrom;
+	t_vec3		lookat;
+	t_vec3		vup;
 	int			samples_per_pixel;
+	int			max_depth;
 
-	// Private state
 	int			image_height;
-	double		pixel_samples_scale;
-	t_point3	center;
-	t_point3	pixel00_loc;
+	t_vec3		center;
+	t_vec3		pixel00_loc;
 	t_vec3		pixel_delta_u;
 	t_vec3		pixel_delta_v;
+	t_vec3		u;
+	t_vec3		v;
+	t_vec3		w;
 
-	// Back-buffer for rendering
 	void		*mlx;
 	void		*win;
 	t_image		image;
-} t_camera;
+}				t_camera;
 
 void			camera_render(t_camera *cam, t_hittable_list *world);
 t_ray			get_ray(t_camera *cam, int i, int j);

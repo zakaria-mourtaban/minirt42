@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 00:09:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/06 00:09:46 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 09:54:01 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 typedef struct vec3
 {
 	double				e[3];
-} t_vec3;
+}	t_vec3;
 
 typedef t_vec3			t_point3;
 

@@ -6,12 +6,13 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 23:46:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/05 23:53:42 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:18:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vec3_defs.h"
 #include "../../ft_printf/ft_printf.h"
+#include "vec3_defs.h"
+#include "vec3_ops2.h"
 
 static void	print_char(char c)
 {

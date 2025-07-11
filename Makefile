@@ -1,6 +1,6 @@
 NAME = miniRT
 CFLAGS = -Wall -Werror -Wextra -g
-SRCS = minirt_src/main.c minirt_src/random.c minirt_src/sphere.c minirt_src/hittable.c minirt_src/vec3_ops4.c minirt_src/material.c minirt_src/hittable_list.c minirt_src/color.c minirt_src/interval.c minirt_src/ray.c minirt_src/vec3_utils.c minirt_src/vec3_ops.c minirt_src/vec3_ops2.c minirt_src/vec3_ops3.c
+SRCS = minirt_src/main.c minirt_src/utils.c minirt_src/vec3.c minirt_src/random.c minirt_src/sphere.c minirt_src/hittable.c minirt_src/vec3_ops4.c minirt_src/material.c minirt_src/hittable_list.c minirt_src/color.c minirt_src/interval.c minirt_src/ray.c minirt_src/vec3_utils.c minirt_src/vec3_ops.c minirt_src/vec3_ops2.c minirt_src/vec3_ops3.c
 OBJS = $(SRCS:%.c=%.o)
 PRINTF_DIR = ./ft_printf
 LIBFT_DIR = ./libft
