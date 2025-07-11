@@ -1,6 +1,6 @@
 NAME = miniRT
 CFLAGS = -Wall -Werror -Wextra -g
-SRCS = minirt_src/main.c minirt_src/utils.c minirt_src/vec3.c minirt_src/random.c minirt_src/sphere.c minirt_src/hittable.c minirt_src/vec3_ops4.c minirt_src/material.c minirt_src/hittable_list.c minirt_src/color.c minirt_src/interval.c minirt_src/ray.c minirt_src/vec3_utils.c minirt_src/vec3_ops.c minirt_src/vec3_ops2.c minirt_src/vec3_ops3.c
+SRCS = source/main.c source/camera_init.c source/utils.c source/vec3.c source/random.c source/sphere.c source/hittable.c source/vec3_ops4.c source/material.c source/hittable_list.c source/color.c source/interval.c source/ray.c source/vec3_utils.c source/vec3_ops.c source/vec3_ops2.c source/vec3_ops3.c source/vec3_print.c
 OBJS = $(SRCS:%.c=%.o)
 PRINTF_DIR = ./ft_printf
 LIBFT_DIR = ./libft
@@ -15,9 +15,9 @@ MINILIBX_LIB = $(MINILIBX_DIR)/libmlx.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(PRINTF_LIB) $(LIBFT_LIB) $(MINILIBX_LIB)
-	gcc $(CFLAGS) -o $(NAME) $(OBJS) -Iminirt_src -I$(PRINTF_DIR) -L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_DIR) -lftprintf -lft -lmlx -lXext -lX11 -lm
+	gcc $(CFLAGS) -o $(NAME) $(OBJS) -Isource -I$(PRINTF_DIR) -L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_DIR) -lftprintf -lft -lmlx -lXext -lX11 -lm
 
-%.o: minirt_src/%.c
+%.o: source/%.c
 	gcc $(CFLAGS) -c $< -o $@
 
 $(PRINTF_LIB):
