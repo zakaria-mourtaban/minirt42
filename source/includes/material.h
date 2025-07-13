@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 01:10:32 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/11 13:36:25 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/13 23:26:25 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_material
 			const struct s_hit_record *rec, t_color *attenuation,
 			t_ray *scattered);
 	t_color	albedo;
+	double	ir;
 	double	fuzz;
 }			t_material;
 

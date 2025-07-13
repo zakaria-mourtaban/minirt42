@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:03:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/11 10:16:04 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/13 23:07:58 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ typedef struct s_camera
 	void		*mlx;
 	void		*win;
 	t_image		image;
+	double		yaw;
+	double		pitch;
 }	t_camera;
 
 void			camera_render(t_camera *cam, t_hittable_list *world);
