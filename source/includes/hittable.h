@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:44:05 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/11 13:39:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/14 00:15:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # include "vectors/vec3.h"
 # include <stdbool.h>
 
-struct s_ray;
-struct s_hittable;
-struct s_material;
+struct	s_ray;
+struct	s_hittable;
+struct	s_material;
 
 typedef struct s_hit_record
 {
@@ -36,9 +36,9 @@ void					set_face_normal(t_hit_record *rec,
 
 typedef struct s_hittable
 {
-	bool				(*hit)(const struct s_hittable *self,
-						const struct s_ray *r, t_interval ray_t,
-						t_hit_record *rec);
+	bool				(*hit)(const struct s_hittable * self,
+		const struct s_ray * r, t_interval ray_t,
+		t_hit_record * rec);
 }						t_hittable;
 
 #endif

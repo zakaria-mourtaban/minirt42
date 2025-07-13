@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 01:10:32 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/13 23:26:25 by zmourtab         ###   ########.fr       */
+/*   Created: 2025/07/14 00:04:33 by zmourtab          #+#    #+#             */
+/*   Updated: 2025/07/14 00:06:50 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,33 @@
 # include "vectors/vec3.h"
 # include <stdbool.h>
 
-struct s_hit_record;
+struct	s_hit_record;
+
+// New struct to hold scatter results
+typedef struct s_scatter_record
+{
+	t_ray	scattered;
+	t_color	attenuation;
+}			t_scatter_record;
 
 typedef struct s_material
 {
-	bool	(*scatter)(const struct s_material *self, const t_ray *r_in,
-			const struct s_hit_record *rec, t_color *attenuation,
-			t_ray *scattered);
+	// Updated function pointer with fewer parameters
+	bool	(*scatter)(const struct s_material * self,
+		const t_ray * r_in, const struct s_hit_record * rec,
+		t_scatter_record * srec);
 	t_color	albedo;
 	double	ir;
 	double	fuzz;
 }			t_material;
 
+// Updated function prototypes
 bool		lambertian_scatter(const t_material *self, const t_ray *r_in,
-				const struct s_hit_record *rec, t_color *attenuation,
-				t_ray *scattered);
+				const struct s_hit_record *rec, t_scatter_record *srec);
 t_material	material_new_lambertian(const t_color *albedo);
 
 bool		metal_scatter(const t_material *self, const t_ray *r_in,
-				const struct s_hit_record *rec, t_color *attenuation,
-				t_ray *scattered);
+				const struct s_hit_record *rec, t_scatter_record *srec);
 t_material	material_new_metal(const t_color *albedo, double fuzz);
 
 #endif

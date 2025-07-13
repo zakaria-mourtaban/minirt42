@@ -4,9 +4,9 @@
 /* main.c                                             :+:      :+:    :+:   */
 /* +:+ +:+         +:+     */
 /* By: your_name <your_email@example.com>         +#+  +:+       +#+        */
-/*+#+#+#+#+#+   +#+           */
+/* +#+#+#+#+#+   +#+           */
 /* Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/* Updated: 2025/07/14 01:25:00 by your_name       ###   ########.fr       */
+/* Updated: 2025/07/14 01:45:00 by your_name       ###   ########.fr       */
 /* */
 /* ************************************************************************** */
 
@@ -81,24 +81,34 @@ static t_color	phong_lighting(t_scene *scene, t_hit_record *rec)
 	return (vec3_add(&ambient_contrib, &diffuse_contrib));
 }
 
+// ** CORRECTED ray_color TO USE THE NEW SCATTER RECORD **
 static t_color	ray_color(const t_ray *r, t_scene *scene, int depth)
 {
-	t_hit_record	rec;
-	t_ray			scattered_ray;
-	t_color			attenuation;
-	t_color			scattered_color;
+	t_hit_record		rec;
+	t_scatter_record	srec;
+	t_color				scattered_color;
+	t_vec3				unit_dir;
+	double				a;
+	t_color				start_color;
+	t_color				end_color;
 
 	if (depth <= 0)
 		return (vec3_create(0, 0, 0));
 	if (!hittable_list_hit((t_hittable *)scene->world, r,
 		interval_new(0.001, INFINITY), &rec))
 	{
-		return (vec3_create(0, 0, 0));
+		unit_dir = vec3_unit_vector(&r->dir);
+		a = 0.5 * (unit_dir.e[1] + 1.0);
+		start_color = vec3_create(1.0, 1.0, 1.0);
+		end_color = vec3_create(0.5, 0.7, 1.0);
+		vec3_scale_inplace(&start_color, 1.0 - a);
+		vec3_scale_inplace(&end_color, a);
+		return (vec3_add(&start_color, &end_color));
 	}
-	if (rec.mat->scatter(rec.mat, r, &rec, &attenuation, &scattered_ray))
+	if (rec.mat->scatter(rec.mat, r, &rec, &srec))
 	{
-		scattered_color = ray_color(&scattered_ray, scene, depth - 1);
-		return (vec3_multiply_components(&attenuation, &scattered_color));
+		scattered_color = ray_color(&srec.scattered, scene, depth - 1);
+		return (vec3_multiply_components(&srec.attenuation, &scattered_color));
 	}
 	return (phong_lighting(scene, &rec));
 }
@@ -305,7 +315,6 @@ static void	initialize_world(t_scene *scene)
 	t_material	mat_ball2;
 	t_material	mat_cyl;
 
-	// Increased ambient light and adjusted point light
 	scene->ambient_color = (t_color){{1.0, 1.0, 1.0}};
 	scene->ambient_ratio = 0.2;
 	scene->light.position = (t_point3){{-10, 10, 10}};
@@ -328,11 +337,12 @@ static void	initialize_world(t_scene *scene)
 		2.0,
 		mat_ball2));
 	hittable_list_add(scene->world, (t_hittable *)cylinder_new(
-		(t_point3){{0, 2.0, -1}},
-		(t_vec3){{1, 0, 0}},
-		1.0,
-		3.0,
-		mat_cyl));
+		(t_cyl_params){
+		.center = (t_point3){{0, 2.0, -1}},
+		.axis = (t_vec3){{1, 0, 0}},
+		.diameter = 1.0,
+		.height = 3.0
+	}, mat_cyl));
 }
 
 void	initialize_scene(t_scene *scene)
