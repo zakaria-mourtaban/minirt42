@@ -6,7 +6,7 @@
 /* By: your_name <your_email@example.com>         +#+  +:+       +#+        */
 /*+#+#+#+#+#+   +#+           */
 /* Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/* Updated: 2025/07/14 01:20:00 by your_name       ###   ########.fr       */
+/* Updated: 2025/07/14 01:25:00 by your_name       ###   ########.fr       */
 /* */
 /* ************************************************************************** */
 
@@ -90,19 +90,16 @@ static t_color	ray_color(const t_ray *r, t_scene *scene, int depth)
 
 	if (depth <= 0)
 		return (vec3_create(0, 0, 0));
-	// If the ray hits nothing, return black (no sky).
 	if (!hittable_list_hit((t_hittable *)scene->world, r,
 		interval_new(0.001, INFINITY), &rec))
 	{
 		return (vec3_create(0, 0, 0));
 	}
-	// If the material is reflective/refractive, calculate scattered color.
 	if (rec.mat->scatter(rec.mat, r, &rec, &attenuation, &scattered_ray))
 	{
 		scattered_color = ray_color(&scattered_ray, scene, depth - 1);
 		return (vec3_multiply_components(&attenuation, &scattered_color));
 	}
-	// Otherwise, calculate the color from direct lighting.
 	return (phong_lighting(scene, &rec));
 }
 
@@ -308,10 +305,11 @@ static void	initialize_world(t_scene *scene)
 	t_material	mat_ball2;
 	t_material	mat_cyl;
 
+	// Increased ambient light and adjusted point light
 	scene->ambient_color = (t_color){{1.0, 1.0, 1.0}};
-	scene->ambient_ratio = 0.1;
+	scene->ambient_ratio = 0.2;
 	scene->light.position = (t_point3){{-10, 10, 10}};
-	scene->light.brightness = 0.8;
+	scene->light.brightness = 0.7;
 	mat_ground = material_new_lambertian(&(t_color){{0.5, 0.5, 0.5}});
 	mat_ball1 = material_new_metal(&(t_color){{0.8, 0.1, 0.1}}, 0.1);
 	mat_ball2 = material_new_metal(&(t_color){{0.8, 0.8, 0.8}}, 0.0);
@@ -331,9 +329,9 @@ static void	initialize_world(t_scene *scene)
 		mat_ball2));
 	hittable_list_add(scene->world, (t_hittable *)cylinder_new(
 		(t_point3){{0, 2.0, -1}},
-		(t_vec3){{0, 1, 0}},
-		5.0,
-		5.0,
+		(t_vec3){{1, 0, 0}},
+		1.0,
+		3.0,
 		mat_cyl));
 }
 
@@ -354,11 +352,11 @@ void	initialize_scene(t_scene *scene)
 	if (!scene->camera)
 		exit(1);
 	scene->camera->aspect_ratio = 16.0 / 9.0;
-	scene->camera->image_width = 500;
+	scene->camera->image_width = 800;
 	scene->camera->image_height = fmax(1, scene->camera->image_width
 			/ scene->camera->aspect_ratio);
 	scene->camera->vfov = 70;
-	scene->camera->lookfrom = vec3_create(0, 2, -10);
+	scene->camera->lookfrom = vec3_create(0, 2, 10);
 	scene->camera->lookat = vec3_create(0, 2, -1);
 	scene->camera->vup = vec3_create(0, 1, 0);
 	initial_dir_vec = vec3_subtract(&scene->camera->lookat,
