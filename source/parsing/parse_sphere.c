@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_sphere.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/20 14:35:43 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/20 14:52:09 by mkraytem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minirt.h"
 
 void	parse_sphere(char **tokens, t_scene *scene)
 {
-	char	**center;
-	char	**color;
-	double	diameter;
-	t_color	c;
+	char		**center;
+	char		**color;
+	double		diameter;
+	t_color		c;
 	t_material	mat;
 
 	center = ft_split(tokens[1], ',');
@@ -21,4 +33,4 @@ void	parse_sphere(char **tokens, t_scene *scene)
 		mat));
 	ft_free_split(center);
 	ft_free_split(color);
-} 
+}

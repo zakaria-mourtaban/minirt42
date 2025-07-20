@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_ambient.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/20 14:35:24 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/20 14:51:52 by mkraytem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minirt.h"
 
 void	parse_ambient(char **tokens, t_scene *scene)
@@ -12,4 +24,4 @@ void	parse_ambient(char **tokens, t_scene *scene)
 	scene->ambient_color.e[1] = ft_atof(colors[1]) / 255.0;
 	scene->ambient_color.e[2] = ft_atof(colors[2]) / 255.0;
 	ft_free_split(colors);
-} 
+}

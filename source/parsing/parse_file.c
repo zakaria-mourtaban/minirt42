@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parse_file.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: 42student <marvin@42.fr>                   +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
-/*   Updated: 2024/07/14 00:00:00 by 42student        ###   ########.fr       */
+/*   Updated: 2025/07/20 14:59:52 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minirt.h"
-# include "../includes/parsing/parse_file.h"
+#include "../includes/parsing/parse_file.h"
 
 void	dispatch_element(char **tokens, t_scene *scene)
 {
@@ -30,6 +30,7 @@ void	dispatch_element(char **tokens, t_scene *scene)
 	else if (!ft_strncmp(tokens[0], "cy", 3))
 		parse_cylinder(tokens, scene);
 }
+
 void	parse_rt_file(const char *filename, t_scene *scene)
 {
 	int		fd;

@@ -1,14 +1,15 @@
 /* ************************************************************************** */
-/* */
-/* :::      ::::::::   */
-/* main.c                                             :+:      :+:    :+:   */
-/* +:+ +:+         +:+     */
-/* By: your_name <your_email@example.com>         +#+  +:+       +#+        */
-/* +#+#+#+#+#+   +#+           */
-/* Created: 2025/07/08 00:22:30 by zmourtab          #+#    #+#             */
-/* Updated: 2025/07/14 01:45:00 by your_name       ###   ########.fr       */
-/* */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/20 14:21:56 by mkraytem         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
+
 
 #include "includes/hittable_list.h"
 #include "includes/minirt.h"
@@ -346,6 +347,7 @@ void initialize_scene(t_scene *scene) {
   scene->camera->yaw = atan2(dir.e[2], dir.e[0]);
   scene->camera->pitch = asin(dir.e[1]);
 }
+
 void print_scene(const t_scene *scene) {
   if (scene->camera) {
     printf("Camera:\n");
@@ -384,6 +386,7 @@ int main(int argc, char **argv) {
 
   parse_rt_file(argv[1], &scene);
 
+//   initialize_scene(&scene);
   initialize_camera(scene.camera);
   scene.mlx = mlx_init();
   scene.win = mlx_new_window(scene.mlx, scene.camera->image_width,
