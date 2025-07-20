@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   validate_file.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: 42student <marvin@42.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 11:00:00 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/11 11:00:00 by zmourtab         ###   ########.fr       */
+/*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
+/*   Updated: 2024/07/14 00:00:00 by 42student        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef VALIDATE_FILE_H
+# define VALIDATE_FILE_H
 
-double	degrees_to_radians(double degrees);
-double	ft_atof(const char *str);
-int     ft_strarrlen(char **arr);
-void	ft_free_split(char **arr);
-void	error_exit(const char *msg);
+void	validate_rt_file(const char *filename);
 
-#endif
+#endif 

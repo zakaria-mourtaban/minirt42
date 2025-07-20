@@ -15,6 +15,7 @@
 
 # include "../../ft_printf/ft_printf.h"
 # include "../../libft/libft.h"
+# include <fcntl.h>
 # include "../../minilibx/mlx.h"
 # include "camera_init.h"
 # include "camera.h"
@@ -31,6 +32,8 @@
 # include <math.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include "validation/validate_file.h"
+# include "../includes/validation/validation_utils.h"
 
 typedef struct s_camera	t_camera;
 
@@ -73,6 +76,7 @@ typedef struct s_scene
 #  define KEY_S 115
 #  define KEY_D 100
 #  define KEY_R 114
+#  define BUF_SIZE 4096
 # else
 #  define KEY_ESC 53
 #  define KEY_W 13
