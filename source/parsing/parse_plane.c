@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:35:40 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 14:35:47 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:04:26 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void	parse_plane(char **tokens, t_scene *scene)
 {
-	char	**pos;
-	char	**normal;
-	char	**color;
-	t_vec3	p;
-	t_vec3	n;
-	t_color	c;
+	char		**pos;
+	char		**normal;
+	char		**color;
+	t_vec3		p;
+	t_vec3		n;
+	t_color		c;
 	t_material	mat;
 
 	pos = ft_split(tokens[1], ',');
@@ -35,4 +35,4 @@ void	parse_plane(char **tokens, t_scene *scene)
 	ft_free_split(pos);
 	ft_free_split(normal);
 	ft_free_split(color);
-} 
+}

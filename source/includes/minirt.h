@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/14 00:15:42 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:24:39 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@
 # include <stdbool.h>
 # include "validation/validate_file.h"
 # include "../includes/validation/validation_utils.h"
+# include "../includes/validation/validation_utils2.h"
+# include "../includes/validation/validate_elements.h"
+# include "../includes/validation/validate_elements2.h"
 
 typedef struct s_camera	t_camera;
 

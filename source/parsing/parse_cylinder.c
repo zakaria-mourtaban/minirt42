@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:35:29 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 15:02:55 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:03:43 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static void	parse_cylinder_params(char **tokens, t_cyl_params *params)
 	diameter = ft_atof(tokens[3]);
 	height = ft_atof(tokens[4]);
 	params->center = vec3_create(ft_atof(center[0]),
-		ft_atof(center[1]), ft_atof(center[2]));
+			ft_atof(center[1]), ft_atof(center[2]));
 	params->axis = vec3_create(ft_atof(axis[0]),
-		ft_atof(axis[1]), ft_atof(axis[2]));
+			ft_atof(axis[1]), ft_atof(axis[2]));
 	params->diameter = diameter;
 	params->height = height;
 	ft_free_split(center);
@@ -48,8 +48,8 @@ static void	parse_cylinder_color_mat(char **tokens, t_color *c, t_material *mat)
 void	parse_cylinder(char **tokens, t_scene *scene)
 {
 	t_cyl_params	params;
-	t_color		c;
-	t_material	mat;
+	t_color			c;
+	t_material		mat;
 
 	parse_cylinder_params(tokens, &params);
 	parse_cylinder_color_mat(tokens, &c, &mat);

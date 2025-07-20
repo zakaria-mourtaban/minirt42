@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:35:43 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 14:52:09 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:02:22 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	parse_sphere(char **tokens, t_scene *scene)
 	c.e[2] = ft_atof(color[2]) / 255.0;
 	mat = material_new_lambertian(&c);
 	hittable_list_add(scene->world, (t_hittable *)sphere_new(
-		vec3_create(ft_atof(center[0]), ft_atof(center[1]), ft_atof(center[2])),
-		diameter,
-		mat));
+			vec3_create(ft_atof(center[0]),
+				ft_atof(center[1]), ft_atof(center[2])),
+			diameter, mat));
 	ft_free_split(center);
 	ft_free_split(color);
 }

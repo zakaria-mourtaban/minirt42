@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 15:03:50 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 15:07:48 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:02:46 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static	void	parse_camera_position(char **tokens, t_camera *camera)
 
 	pos = ft_split(tokens[1], ',');
 	camera->lookfrom = vec3_create(ft_atof(pos[0]),
-	ft_atof(pos[1]), ft_atof(pos[2]));
+			ft_atof(pos[1]), ft_atof(pos[2]));
 	ft_free_split(pos);
 }
 
@@ -28,7 +28,7 @@ static	void	parse_camera_orientation(char **tokens, t_camera *camera)
 
 	orient = ft_split(tokens[2], ',');
 	camera->lookat = vec3_create(ft_atof(orient[0]),
-	ft_atof(orient[1]), ft_atof(orient[2]));
+			ft_atof(orient[1]), ft_atof(orient[2]));
 	ft_free_split(orient);
 }
 
