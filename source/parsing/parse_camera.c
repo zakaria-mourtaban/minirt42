@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 15:03:50 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 20:02:46 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/23 22:58:49 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ static	void	set_camera_angles(t_camera *camera)
 void	parse_camera(char **tokens, t_scene *scene)
 {
 	double	fov;
+	t_vec3 look_dir;
+	double dot;
 
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);
@@ -60,6 +62,12 @@ void	parse_camera(char **tokens, t_scene *scene)
 	scene->camera->vfov = fov;
 	scene->camera->aspect_ratio = 16.0 / 9.0;
 	scene->camera->image_width = 800;
-	scene->camera->vup = vec3_create(0, 1, 0);
+	look_dir = vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);
+	look_dir = vec3_unit_vector(&look_dir);
+	dot = fabs(look_dir.e[0] * 0 + look_dir.e[1] * 1 + look_dir.e[2] * 0);
+	if (dot > 0.999)
+		scene->camera->vup = vec3_create(1, 0, 0);
+	else
+		scene->camera->vup = vec3_create(0, 1, 0);
 	set_camera_angles(scene->camera);
 }

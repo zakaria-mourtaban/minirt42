@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 14:21:56 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:36:07 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 static t_color ray_color(const t_ray *r, t_scene *scene, int depth);
 static void render_frame(t_scene *scene);
-static void update_camera_vectors(t_scene *scene);
 static int key_press_hook(int keycode, t_scene *scene);
 static int key_release_hook(int keycode, t_scene *scene);
 
@@ -82,7 +81,6 @@ static t_color phong_lighting(t_scene *scene, t_hit_record *rec) {
   return (vec3_add(&ambient_contrib, &diffuse_contrib));
 }
 
-// ** CORRECTED ray_color TO USE THE NEW SCATTER RECORD **
 static t_color ray_color(const t_ray *r, t_scene *scene, int depth) {
   t_hit_record rec;
   t_scatter_record srec;
@@ -200,69 +198,11 @@ static int key_release_hook(int keycode, t_scene *scene) {
   return (0);
 }
 
-int mouse_hook(int x, int y, t_scene *scene) {
-  int delta_x;
-  int delta_y;
-  double sensitivity;
-
-  if (scene->state != INTERACTIVE)
-    return (0);
-  if (scene->last_x == -1) {
-    scene->last_x = x;
-    scene->last_y = y;
-    return (0);
-  }
-  delta_x = x - scene->last_x;
-  delta_y = y - scene->last_y;
-  sensitivity = 0.003;
-  scene->camera->yaw += delta_x * sensitivity;
-  scene->camera->pitch -= delta_y * sensitivity;
-  if (scene->camera->pitch > M_PI_2 - 0.01)
-    scene->camera->pitch = M_PI_2 - 0.01;
-  if (scene->camera->pitch < -M_PI_2 + 0.01)
-    scene->camera->pitch = -M_PI_2 + 0.01;
-  scene->rerender_needed = true;
-  scene->last_x = x;
-  scene->last_y = y;
-  return (0);
-}
-
-static void update_camera_vectors(t_scene *scene) {
-  double move_speed;
-  t_vec3 fwd;
-  t_vec3 right;
-  t_vec3 move_delta;
-  t_vec3 dir;
-
-  move_speed = 0.2;
-  move_delta = vec3_create(0, 0, 0);
-  fwd = vec3_create(cos(scene->camera->yaw), 0, sin(scene->camera->yaw));
-  right = vec3_create(-sin(scene->camera->yaw), 0, cos(scene->camera->yaw));
-  if (scene->keys_pressed[KEY_W])
-    vec3_add_inplace(&move_delta, &fwd);
-  if (scene->keys_pressed[KEY_S])
-    vec3_subtract_inplace(&move_delta, &fwd);
-  if (scene->keys_pressed[KEY_D])
-    vec3_add_inplace(&move_delta, &right);
-  if (scene->keys_pressed[KEY_A])
-    vec3_subtract_inplace(&move_delta, &right);
-  if (vec3_length_squared(&move_delta) > 0.0) {
-    vec3_scale_inplace(&move_delta, move_speed);
-    vec3_add_inplace(&scene->camera->lookfrom, &move_delta);
-    scene->rerender_needed = true;
-  }
-  dir = (t_vec3){{cos(scene->camera->yaw) * cos(scene->camera->pitch),
-                  sin(scene->camera->pitch),
-                  sin(scene->camera->yaw) * cos(scene->camera->pitch)}};
-  scene->camera->lookat = vec3_add(&scene->camera->lookfrom, &dir);
-}
-
 static int render_loop(void *param) {
   t_scene *scene;
 
   scene = (t_scene *)param;
   if (scene->state == INTERACTIVE) {
-    update_camera_vectors(scene);
     if (scene->rerender_needed) {
       scene->camera->samples_per_pixel = 1;
       scene->camera->max_depth = 5;
@@ -319,8 +259,6 @@ static void initialize_world(t_scene *scene) {
 }
 
 void initialize_scene(t_scene *scene) {
-  t_vec3 dir;
-  t_vec3 initial_dir_vec;
   int i;
 
   scene->state = INTERACTIVE;
@@ -330,45 +268,6 @@ void initialize_scene(t_scene *scene) {
   while (++i < 256)
     scene->keys_pressed[i] = false;
   initialize_world(scene);
-  scene->camera = malloc(sizeof(t_camera));
-  if (!scene->camera)
-    exit(1);
-  scene->camera->aspect_ratio = 16.0 / 9.0;
-  scene->camera->image_width = 800;
-  scene->camera->image_height =
-      fmax(1, scene->camera->image_width / scene->camera->aspect_ratio);
-  scene->camera->vfov = 70;
-  scene->camera->lookfrom = vec3_create(0, 2, 10);
-  scene->camera->lookat = vec3_create(0, 2, -1);
-  scene->camera->vup = vec3_create(0, 1, 0);
-  initial_dir_vec =
-      vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);
-  dir = vec3_unit_vector(&initial_dir_vec);
-  scene->camera->yaw = atan2(dir.e[2], dir.e[0]);
-  scene->camera->pitch = asin(dir.e[1]);
-}
-
-void print_scene(const t_scene *scene) {
-  if (scene->camera) {
-    printf("Camera:\n");
-    printf("  lookfrom: (%.2f, %.2f, %.2f)\n", scene->camera->lookfrom.e[0],
-           scene->camera->lookfrom.e[1], scene->camera->lookfrom.e[2]);
-    printf("  lookat:   (%.2f, %.2f, %.2f)\n", scene->camera->lookat.e[0],
-           scene->camera->lookat.e[1], scene->camera->lookat.e[2]);
-    printf("  vfov: %.2f\n", scene->camera->vfov);
-  }
-  printf("Ambient:\n");
-  printf("  ratio: %.2f\n", scene->ambient_ratio);
-  printf("  color: (%.2f, %.2f, %.2f)\n", scene->ambient_color.e[0],
-         scene->ambient_color.e[1], scene->ambient_color.e[2]);
-  printf("Light:\n");
-  printf("  position: (%.2f, %.2f, %.2f)\n", scene->light.position.e[0],
-         scene->light.position.e[1], scene->light.position.e[2]);
-  printf("  brightness: %.2f\n", scene->light.brightness);
-  if (scene->world)
-    printf("World: %d objects\n", scene->world->size);
-  else
-    printf("World: (null)\n");
 }
 
 int main(int argc, char **argv) {
@@ -386,8 +285,8 @@ int main(int argc, char **argv) {
 
   parse_rt_file(argv[1], &scene);
 
-//   initialize_scene(&scene);
   initialize_camera(scene.camera);
+  scene.rerender_needed = true;
   scene.mlx = mlx_init();
   scene.win = mlx_new_window(scene.mlx, scene.camera->image_width,
                              scene.camera->image_height, "miniRT");
@@ -398,7 +297,6 @@ int main(int argc, char **argv) {
       &scene.camera->image.line_bytes, &scene.camera->image.endian);
   mlx_hook(scene.win, 2, 1L << 0, key_press_hook, &scene);
   mlx_hook(scene.win, 3, 1L << 1, key_release_hook, &scene);
-  mlx_hook(scene.win, 6, 1L << 6, mouse_hook, &scene);
   mlx_hook(scene.win, 17, 0, exit_program, &scene);
   mlx_loop_hook(scene.mlx, render_loop, &scene);
   mlx_loop(scene.mlx);
