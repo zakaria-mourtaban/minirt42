@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/20 20:24:39 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 10:24:42 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@
 # include "../includes/validation/validation_utils2.h"
 # include "../includes/validation/validate_elements.h"
 # include "../includes/validation/validate_elements2.h"
-
 typedef struct s_camera	t_camera;
 
 typedef enum e_state

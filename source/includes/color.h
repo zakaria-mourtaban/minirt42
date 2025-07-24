@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/11 09:54:12 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,6 @@
 typedef t_vec3	t_color;
 
 void			write_color(const t_color *pixel_color, int samples_per_pixel);
+int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
 
 #endif
