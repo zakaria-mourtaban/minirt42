@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/24 11:35:02 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:37:23 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ int	main(int argc, char **argv)
 	if (!scene.camera)
 		return (1);
 	scene.world = hittable_list_new(8);
-	validate_rt_file(argv[1]);
-	parse_rt_file(argv[1], &scene);
+	(validate_rt_file(argv[1]), parse_rt_file(argv[1], &scene));
 	initialize_camera(scene.camera);
 	scene.rerender_needed = true;
 	scene.mlx = mlx_init();

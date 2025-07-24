@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 15:03:50 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/23 22:58:49 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:01:16 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ static	void	set_camera_angles(t_camera *camera)
 void	parse_camera(char **tokens, t_scene *scene)
 {
 	double	fov;
-	t_vec3 look_dir;
-	double dot;
+	t_vec3	look_dir;
+	double	dot;
 
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);

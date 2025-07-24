@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 10:52:28 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:11:16 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,13 @@ typedef struct s_scene
 	double			ambient_ratio;
 	t_light			light;
 }	t_scene;
+
+typedef struct s_element_flags
+{
+	int	a_flag;
+	int	c_flag;
+	int	l_flag;
+}	t_element_flags;
 
 # ifdef __linux__
 #  define KEY_ESC 65307

@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 11:29:38 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/24 11:31:41 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 22:47:45 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,11 @@
 int	exit_program(t_scene *scene)
 {
 	hittable_list_free(scene->world);
-	free(scene->camera);
+	if (scene->camera && scene->camera->image.img_ptr)
+		mlx_destroy_image(scene->mlx, scene->camera->image.img_ptr);
 	if (scene->win)
 		mlx_destroy_window(scene->mlx, scene->win);
+	free(scene->camera);
 	free(scene->mlx);
 	exit(0);
 }
