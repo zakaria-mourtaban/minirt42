@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 01:40:00 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 10:32:10 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:05:38 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,29 +34,31 @@ void	write_color(const t_color *pixel_color, int samples_per_pixel)
 			* interval_clamp(&intensity, b)));
 }
 
-static double linear_to_gamma(double linear_component) {
-	if (linear_component > 0)
-	  return (sqrt(linear_component));
-	return (0);
-  }
-  
-int color_to_int(const t_color *pixel_color, int samples_per_pixel)
+static double	linear_to_gamma(double linear_component)
 {
-	double scale;
-	t_color scaled_pixel;
-	const t_interval intensity = interval_new(0.000, 0.999);
-	int r;
-	int g;
-	int b;
-  
+	if (linear_component > 0)
+		return (sqrt(linear_component));
+	return (0);
+}
+
+int	color_to_int(const t_color *pixel_color, int samples_per_pixel)
+{
+	double		scale;
+	t_color		scaled_pixel;
+	t_interval	intensity;
+	int			r;
+	int			g;
+	int			b;
+
+	intensity = interval_new(0.000, 0.999);
 	scaled_pixel = *pixel_color;
 	scale = 1.0 / samples_per_pixel;
 	vec3_scale_inplace(&scaled_pixel, scale);
-	r = (int)(256 *
-			  interval_clamp(&intensity, linear_to_gamma(scaled_pixel.e[0])));
-	g = (int)(256 *
-			  interval_clamp(&intensity, linear_to_gamma(scaled_pixel.e[1])));
-	b = (int)(256 *
-			  interval_clamp(&intensity, linear_to_gamma(scaled_pixel.e[2])));
+	r = (int)(256 * interval_clamp(&intensity,
+				linear_to_gamma(scaled_pixel.e[0])));
+	g = (int)(256 * interval_clamp(&intensity,
+				linear_to_gamma(scaled_pixel.e[1])));
+	b = (int)(256 * interval_clamp(&intensity,
+				linear_to_gamma(scaled_pixel.e[2])));
 	return ((r << 16) | (g << 8) | b);
-  }
+}
