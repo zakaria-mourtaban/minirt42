@@ -37,16 +37,14 @@ static void	init_camera_vectors(t_camera *camera)
 
 static void	init_upper_left(t_camera *camera)
 {
-    t_vec3 half_horizontal;
-    t_vec3 half_vertical;
+	t_vec3	half_horizontal;
+	t_vec3	half_vertical;
 
-    // Formula: origin - (horizontal/2) + (vertical/2) - w
-    half_horizontal = vec3_divide(&camera->horizontal, 2.0);
-    half_vertical = vec3_divide(&camera->vertical, 2.0);
-
-    camera->pixel00_loc = vec3_subtract(&camera->lookfrom, &half_horizontal);
-    camera->pixel00_loc = vec3_add(&camera->pixel00_loc, &half_vertical);
-    camera->pixel00_loc = vec3_subtract(&camera->pixel00_loc, &camera->w);
+	half_horizontal = vec3_divide(&camera->horizontal, 2.0);
+	half_vertical = vec3_divide(&camera->vertical, 2.0);
+	camera->pixel00_loc = vec3_subtract(&camera->lookfrom, &half_horizontal);
+	camera->pixel00_loc = vec3_add(&camera->pixel00_loc, &half_vertical);
+	camera->pixel00_loc = vec3_subtract(&camera->pixel00_loc, &camera->w);
 }
 
 void	initialize_camera(t_camera *camera)

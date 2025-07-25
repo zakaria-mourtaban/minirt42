@@ -138,7 +138,7 @@ int	render_loop(void *param)
 		initialize_camera(scene->camera);
 		render_frame(scene);
 		mlx_put_image_to_window(scene->mlx, scene->win,
-		scene->camera->image.img_ptr, 0, 0);
+			scene->camera->image.img_ptr, 0, 0);
 		scene->state = DONE;
 		ft_printf("High-quality render complete! Press ESC to exit.\n");
 	}
