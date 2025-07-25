@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_render.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 10:17:44 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/25 14:00:38 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:06:51 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,24 +92,4 @@ void	render_frame(t_scene *scene)
 		j++;
 	}
 	ft_printf("\rDone.                 \n");
-}
-
-int	render_loop(void *param)
-{
-	t_scene	*scene;
-
-	scene = (t_scene *)param;
-	if (scene->state != DONE)
-	{
-		scene = (t_scene *)param;
-		scene->camera->samples_per_pixel = 1;
-		scene->camera->max_depth = 50;
-		initialize_camera(scene->camera);
-		render_frame(scene);
-		mlx_put_image_to_window(scene->mlx, scene->win,
-			scene->camera->image.img_ptr, 0, 0);
-		scene->state = DONE;
-		ft_printf("High-quality render complete! Press ESC to exit.\n");
-	}
-	return (0);
 }

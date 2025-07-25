@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/25 14:31:08 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:37:16 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "includes/validation/validate_file.h"
 #include "includes/key_hooks.h"
 #include "includes/handle_render.h"
+#include "includes/handle_render_loop.h"
 
 static t_vec3	sample_square(void)
 {
@@ -46,7 +47,7 @@ void	initialize_scene(t_scene *scene)
 {
 	int	i;
 
-	scene->state = RENDERING;
+	scene->state = INTERACTIVE;
 	scene->rerender_needed = true;
 	scene->last_x = -1;
 	i = -1;
@@ -78,6 +79,7 @@ int	main(int argc, char **argv)
 	mlx_hook(scene.win, 2, 1L << 0, key_press_hook, &scene);
 	mlx_hook(scene.win, 3, 1L << 1, key_release_hook, &scene);
 	mlx_hook(scene.win, 17, 0, exit_program, &scene);
+	mlx_hook(scene.win, 6, 1L << 6, mouse_move_hook, &scene);
 	mlx_loop_hook(scene.mlx, render_loop, &scene);
 	mlx_loop(scene.mlx);
 	return (0);
