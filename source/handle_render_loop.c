@@ -19,16 +19,6 @@
 #define MOVE_SPEED 0.5
 #define M_PI		3.14159265358979323846
 
-static void	update_camera_direction(t_scene *scene)
-{
-	t_vec3	direction;
-
-	direction.e[0] = cos(scene->camera->yaw) * cos(scene->camera->pitch);
-	direction.e[1] = sin(scene->camera->pitch);
-	direction.e[2] = sin(scene->camera->yaw) * cos(scene->camera->pitch);
-	scene->camera->lookat = vec3_add(&scene->camera->lookfrom, &direction);
-}
-
 int	mouse_move_hook(int x, int y, t_scene *scene)
 {
 	int	dx;
@@ -101,7 +91,7 @@ void	handle_interactive_state(t_scene *scene)
 
 void	handle_rendering_state(t_scene *scene)
 {
-	scene->camera->samples_per_pixel = 500;
+	scene->camera->samples_per_pixel = 5;
 	scene->camera->max_depth = 50;
 	initialize_camera(scene->camera);
 	render_frame(scene);

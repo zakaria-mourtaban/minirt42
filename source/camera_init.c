@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 12:30:00 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/14 00:26:30 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/25 16:51:30 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,22 @@ static void	init_upper_left(t_camera *camera)
 	camera->pixel00_loc = vec3_subtract(&camera->pixel00_loc, &camera->w);
 }
 
+void	setup_viewport(t_camera *camera, double viewport_height,
+	double viewport_width)
+{
+	init_camera_vectors(camera);
+	camera->horizontal = vec3_scale(&camera->u, viewport_width);
+	camera->vertical = vec3_scale(&camera->v, viewport_height);
+	init_viewport(camera, viewport_height, viewport_width);
+	init_upper_left(camera);
+}
+
 void	initialize_camera(t_camera *camera)
 {
-	double		focal_length;
-	double		viewport_height;
-	double		viewport_width;
-	t_vec3		look_dir;
+	double	focal_length;
+	double	viewport_height;
+	double	viewport_width;
+	t_vec3	look_dir;
 
 	camera->image_height = camera->image_width / camera->aspect_ratio;
 	if (camera->image_height < 1)
@@ -61,21 +71,10 @@ void	initialize_camera(t_camera *camera)
 	look_dir = vec3_subtract(&camera->lookfrom, &camera->lookat);
 	focal_length = vec3_length(&look_dir);
 	if (camera->vfov < 0)
-	{
 		camera->vfov = -camera->vfov;
-		viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
-			* focal_length;
-	}
-	else
-	{
-		viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
-			* focal_length;
-	}
-	viewport_width = viewport_height * ((double)camera->image_width
-			/ camera->image_height);
-	init_camera_vectors(camera);
-	camera->horizontal = vec3_scale(&camera->u, viewport_width);
-	camera->vertical = vec3_scale(&camera->v, viewport_height);
-	init_viewport(camera, viewport_height, viewport_width);
-	init_upper_left(camera);
+	viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
+		* focal_length;
+	viewport_width = viewport_height
+		* ((double)camera->image_width / camera->image_height);
+	setup_viewport(camera, viewport_height, viewport_width);
 }

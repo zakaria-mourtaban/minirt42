@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/25 16:14:36 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/25 16:45:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,9 @@ t_ray	get_ray(t_camera *cam, int i, int j)
 
 void	initialize_scene(t_scene *scene)
 {
-	int	i;
-
-	scene->state = INTERACTIVE;
 	scene->rerender_needed = true;
-	scene->last_x = -1;
-	i = -1;
-	while (++i < 256)
-		scene->keys_pressed[i] = false;
+	scene->mlx = mlx_init();
+	initialize_camera(scene->camera);
 }
 
 int	main(int argc, char **argv)
@@ -66,9 +61,7 @@ int	main(int argc, char **argv)
 		return (1);
 	scene.world = hittable_list_new(8);
 	(validate_rt_file(argv[1]), parse_rt_file(argv[1], &scene));
-	initialize_camera(scene.camera);
-	scene.rerender_needed = true;
-	scene.mlx = mlx_init();
+	initialize_scene(&scene);
 	scene.win = mlx_new_window(scene.mlx, scene.camera->image_width,
 			scene.camera->image_height, "miniRT");
 	scene.camera->image.img_ptr = mlx_new_image(
@@ -80,6 +73,7 @@ int	main(int argc, char **argv)
 	mlx_hook(scene.win, 3, 1L << 1, key_release_hook, &scene);
 	mlx_hook(scene.win, 17, 0, exit_program, &scene);
 	mlx_hook(scene.win, 6, 1L << 6, mouse_move_hook, &scene);
+	mlx_mouse_move(scene.mlx, scene.win, 0, 0);
 	mlx_loop_hook(scene.mlx, render_loop, &scene);
 	mlx_loop(scene.mlx);
 	return (0);
