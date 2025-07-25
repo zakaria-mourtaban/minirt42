@@ -130,27 +130,15 @@ int	render_loop(void *param)
 	t_scene	*scene;
 
 	scene = (t_scene *)param;
-	if (scene->state == INTERACTIVE)
+	if (scene->state != DONE)
 	{
-		if (scene->rerender_needed)
-		{
-			scene->camera->samples_per_pixel = 1;
-			scene->camera->max_depth = 5;
-			initialize_camera(scene->camera);
-			render_frame(scene);
-			mlx_put_image_to_window(scene->mlx, scene->win,
-				scene->camera->image.img_ptr, 0, 0);
-			scene->rerender_needed = false;
-		}
-	}
-	else if (scene->state == RENDERING)
-	{
-		scene->camera->samples_per_pixel = 100;
+		scene = (t_scene *)param;
+		scene->camera->samples_per_pixel = 1;
 		scene->camera->max_depth = 50;
 		initialize_camera(scene->camera);
 		render_frame(scene);
 		mlx_put_image_to_window(scene->mlx, scene->win,
-			scene->camera->image.img_ptr, 0, 0);
+		scene->camera->image.img_ptr, 0, 0);
 		scene->state = DONE;
 		ft_printf("High-quality render complete! Press ESC to exit.\n");
 	}

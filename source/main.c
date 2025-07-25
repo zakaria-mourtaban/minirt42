@@ -48,7 +48,7 @@ void	initialize_scene(t_scene *scene)
 {
 	int	i;
 
-	scene->state = INTERACTIVE;
+	scene->state = RENDERING;
 	scene->rerender_needed = true;
 	scene->last_x = -1;
 	i = -1;
