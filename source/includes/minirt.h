@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/25 14:02:17 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:42:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ typedef struct s_element_flags
 	int	c_flag;
 	int	l_flag;
 }	t_element_flags;
+
+int	exit_program(t_scene *scene);
 
 # ifdef __linux__
 #  define KEY_ESC 65307
