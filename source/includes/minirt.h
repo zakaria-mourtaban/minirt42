@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/14 00:15:42 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:02:17 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../../ft_printf/ft_printf.h"
 # include "../../libft/libft.h"
+# include <fcntl.h>
 # include "../../minilibx/mlx.h"
 # include "camera_init.h"
 # include "camera.h"
@@ -31,6 +32,12 @@
 # include <math.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include "validation/validate_file.h"
+# include "../includes/validation/validation_utils.h"
+# include "../includes/validation/validation_utils2.h"
+# include "../includes/validation/validate_elements.h"
+# include "../includes/validation/validate_elements2.h"
+# include "phong_lighting.h"
 
 typedef struct s_camera	t_camera;
 
@@ -66,6 +73,13 @@ typedef struct s_scene
 	t_light			light;
 }	t_scene;
 
+typedef struct s_element_flags
+{
+	int	a_flag;
+	int	c_flag;
+	int	l_flag;
+}	t_element_flags;
+
 # ifdef __linux__
 #  define KEY_ESC 65307
 #  define KEY_W 119
@@ -73,6 +87,7 @@ typedef struct s_scene
 #  define KEY_S 115
 #  define KEY_D 100
 #  define KEY_R 114
+#  define BUF_SIZE 4096
 # else
 #  define KEY_ESC 53
 #  define KEY_W 13

@@ -1,22 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   parse_ambient.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 11:00:00 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/20 14:34:03 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/20 14:35:24 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/20 14:51:52 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#include "../includes/minirt.h"
 
-double	degrees_to_radians(double degrees);
-double	ft_atof(const char *str);
-int		ft_strarrlen(char **arr);
-void	ft_free_split(char **arr);
-void	error_exit(const char *msg);
+void	parse_ambient(char **tokens, t_scene *scene)
+{
+	double	ratio;
+	char	**colors;
 
-#endif
+	ratio = ft_atof(tokens[1]);
+	colors = ft_split(tokens[2], ',');
+	scene->ambient_ratio = ratio;
+	scene->ambient_color.e[0] = ft_atof(colors[0]) / 255.0;
+	scene->ambient_color.e[1] = ft_atof(colors[1]) / 255.0;
+	scene->ambient_color.e[2] = ft_atof(colors[2]) / 255.0;
+	ft_free_split(colors);
+}

@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   parse_light.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/20 14:35:34 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/20 20:01:36 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#include "../includes/minirt.h"
 
-# include "../../ft_printf/ft_printf.h"
-# include "interval.h"
-# include "vectors/vec3.h"
+void	parse_light(char **tokens, t_scene *scene)
+{
+	char	**pos;
+	double	brightness;
 
-typedef t_vec3	t_color;
-
-void			write_color(const t_color *pixel_color, int samples_per_pixel);
-int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
-
-#endif
+	pos = ft_split(tokens[1], ',');
+	scene->light.position = vec3_create(ft_atof(pos[0]),
+			ft_atof(pos[1]), ft_atof(pos[2]));
+	ft_free_split(pos);
+	brightness = ft_atof(tokens[2]);
+	scene->light.brightness = brightness;
+}

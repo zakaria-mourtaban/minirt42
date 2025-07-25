@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   validate_elements.h                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/24 22:57:06 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/24 23:05:05 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#ifndef VALIDATE_ELEMENTS_H
+# define VALIDATE_ELEMENTS_H
 
-# include "../../ft_printf/ft_printf.h"
-# include "interval.h"
-# include "vectors/vec3.h"
-
-typedef t_vec3	t_color;
-
-void			write_color(const t_color *pixel_color, int samples_per_pixel);
-int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
+void	validate_ambient(char **tokens, int count, int *a_flag);
+void	validate_camera(char **tokens, int count, int *c_flag);
+void	validate_light(char **tokens, int count, int *l_flag);
 
 #endif

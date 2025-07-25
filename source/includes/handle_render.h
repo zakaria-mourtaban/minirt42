@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   handle_render.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/24 10:50:24 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/24 10:52:18 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#ifndef HANDLE_RENDER_H
+# define HANDLE_RENDER_H
 
-# include "../../ft_printf/ft_printf.h"
-# include "interval.h"
-# include "vectors/vec3.h"
+# include "minirt.h"
 
-typedef t_vec3	t_color;
+t_color	render_pixel(t_camera *cam, int i, int j, t_scene *scene);
+void	render_frame(t_scene *scene);
+int		render_loop(void *param);
 
-void			write_color(const t_color *pixel_color, int samples_per_pixel);
-int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
-
-#endif
+#endif 

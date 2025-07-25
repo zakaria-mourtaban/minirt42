@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
+/*   validate_file.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: 42student <marvin@42.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/13 16:26:53 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/06/14 16:32:31 by zmourtab         ###   ########.fr       */
+/*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
+/*   Updated: 2024/07/14 00:00:00 by 42student        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef VALIDATE_FILE_H
+# define VALIDATE_FILE_H
 
-void	ft_lstadd_front(t_list **lst, t_list *new_elem)
-{
-	new_elem->next = *lst;
-	*lst = new_elem;
-}
+void	validate_rt_file(const char *filename);
+
+#endif 

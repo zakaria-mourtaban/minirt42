@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   key_hooks.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/24 10:51:16 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/24 10:52:07 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#ifndef KEY_HOOKS_H
+# define KEY_HOOKS_H
 
-# include "../../ft_printf/ft_printf.h"
-# include "interval.h"
-# include "vectors/vec3.h"
+# include "minirt.h"
 
-typedef t_vec3	t_color;
+int	exit_program(t_scene *scene);
+int	key_press_hook(int keycode, t_scene *scene);
+int	key_release_hook(int keycode, t_scene *scene);
 
-void			write_color(const t_color *pixel_color, int samples_per_pixel);
-int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
-
-#endif
+#endif 

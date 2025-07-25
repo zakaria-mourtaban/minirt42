@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   color.h                                            :+:      :+:    :+:   */
+/*   phong_lighting.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/08 00:20:59 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/24 08:48:48 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/25 13:53:31 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/25 14:12:18 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLOR_H
-# define COLOR_H
+#ifndef PHONG_LIGHTING_H
+# define PHONG_LIGHTING_H
 
-# include "../../ft_printf/ft_printf.h"
-# include "interval.h"
-# include "vectors/vec3.h"
+typedef struct s_scene	t_scene;
 
-typedef t_vec3	t_color;
-
-void			write_color(const t_color *pixel_color, int samples_per_pixel);
-int				color_to_int(const t_color *pixel_color, int samples_per_pixel);
+t_color	phong_lighting(t_scene *scene, t_hit_record *rec);
 
 #endif

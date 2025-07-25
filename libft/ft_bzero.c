@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:25:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/06/11 18:04:26 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:33:14 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
 void	ft_bzero(void *s, size_t n)
-{	
+{
 	unsigned char	*str;
 	size_t			i;
 
