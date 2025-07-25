@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
-/*   Updated: 2025/07/20 20:25:25 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 12:03:13 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ static void	process_line(char *line, int *a_flag, int *c_flag, int *l_flag)
 	ft_free_split(tokens);
 }
 
-static void	process_buffer(char *buf, int bytes, int *a_flag, int *c_flag, int *l_flag)
+static void	process_buffer(char *buf, int bytes,
+		t_element_flags *flags)
 {
 	int		i;
 	int		start;
@@ -51,15 +52,15 @@ static void	process_buffer(char *buf, int bytes, int *a_flag, int *c_flag, int *
 		{
 			buf[i] = '\0';
 			if (buf[start] && buf[start] != '#')
-				process_line(buf + start, a_flag, c_flag, l_flag);
+				process_line(buf + start, &flags->a_flag,
+					&flags->c_flag, &flags->l_flag);
 			start = i + 1;
 		}
 		i++;
 	}
 }
 
-static void	read_and_validate_file(int fd, int *a_flag,
-				int *c_flag, int *l_flag)
+static void	read_and_validate_file(int fd, t_element_flags *flags)
 {
 	int		bytes;
 	char	buf[4096 + 1];
@@ -68,7 +69,7 @@ static void	read_and_validate_file(int fd, int *a_flag,
 	while (bytes > 0)
 	{
 		buf[bytes] = '\0';
-		process_buffer(buf, bytes, a_flag, c_flag, l_flag);
+		process_buffer(buf, bytes, flags);
 		bytes = read(fd, buf, 4096);
 	}
 	if (bytes < 0)
@@ -87,21 +88,20 @@ static void	check_required_elements(int a_flag, int c_flag, int l_flag)
 
 void	validate_rt_file(const char *filename)
 {
-	int		fd;
-	int		a_flag;
-	int		c_flag;
-	int		l_flag;
+	int				fd;
+	t_element_flags	flags;
 
 	if (!filename || !*filename)
 		error_exit("Error: Invalid filename\n");
-	a_flag = 0;
-	c_flag = 0;
-	l_flag = 0;
+	flags.a_flag = 0;
+	flags.c_flag = 0;
+	flags.l_flag = 0;
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		error_exit("Error: Cannot open file\n");
-	read_and_validate_file(fd, &a_flag, &c_flag, &l_flag);
+	read_and_validate_file(fd, &flags);
 	close(fd);
-	check_required_elements(a_flag, c_flag, l_flag);
+	check_required_elements(flags.a_flag,
+		flags.c_flag, flags.l_flag);
 	printf("Validation completed successfully!\n");
 }

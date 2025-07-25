@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 10:17:44 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/24 11:29:10 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:52:56 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,33 +47,37 @@ static t_color	phong_lighting(t_scene *scene, t_hit_record *rec)
 	return (vec3_add(&ambient_contrib, &diffuse_contrib));
 }
 
+static t_color	background_color(const t_ray *r)
+{
+	t_vec3		unit_dir;
+	double		a;
+	t_color		start;
+	t_color		end;
+
+	unit_dir = vec3_unit_vector(&r->dir);
+	a = 0.5 * (unit_dir.e[1] + 1.0);
+	start = vec3_create(1.0, 1.0, 1.0);
+	end = vec3_create(0.5, 0.7, 1.0);
+	vec3_scale_inplace(&start, 1.0 - a);
+	vec3_scale_inplace(&end, a);
+	return (vec3_add(&start, &end));
+}
+
 static t_color	ray_color(const t_ray *r, t_scene *scene, int depth)
 {
 	t_hit_record		rec;
 	t_scatter_record	srec;
-	t_color				scattered_color;
-	t_vec3				unit_dir;
-	double				a;
-	t_color				start_color;
-	t_color				end_color;
+	t_color				scattered;
 
 	if (depth <= 0)
 		return (vec3_create(0, 0, 0));
 	if (!hittable_list_hit((t_hittable *)scene->world, r,
 			interval_new(0.001, INFINITY), &rec))
-	{
-		unit_dir = vec3_unit_vector(&r->dir);
-		a = 0.5 * (unit_dir.e[1] + 1.0);
-		start_color = vec3_create(1.0, 1.0, 1.0);
-		end_color = vec3_create(0.5, 0.7, 1.0);
-		vec3_scale_inplace(&start_color, 1.0 - a);
-		vec3_scale_inplace(&end_color, a);
-		return (vec3_add(&start_color, &end_color));
-	}
+		return (background_color(r));
 	if (rec.mat->scatter(rec.mat, r, &rec, &srec))
 	{
-		scattered_color = ray_color(&srec.scattered, scene, depth - 1);
-		return (vec3_multiply_components(&srec.attenuation, &scattered_color));
+		scattered = ray_color(&srec.scattered, scene, depth - 1);
+		return (vec3_multiply_components(&srec.attenuation, &scattered));
 	}
 	return (phong_lighting(scene, &rec));
 }

@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 20:17:06 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 20:20:28 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:47:59 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ void	validate_normalized_vector(char *vector_str)
 	double	x;
 	double	y;
 	double	z;
-	double	length;
 
 	if (!vector_str || !*vector_str)
 		error_exit("Empty vector value\n");
@@ -106,10 +105,12 @@ void	validate_normalized_vector(char *vector_str)
 	x = ft_atof(coords[0]);
 	y = ft_atof(coords[1]);
 	z = ft_atof(coords[2]);
-	length = x * x + y * y + z * z;
-	if (length < 0.0001)
-		error_exit("Vector cannot be zero\n");
-	if (length < 0.99 || length > 1.01)
-		error_exit("Vector must be normalized\n");
+	if (x < -1.0 || x > 1.0
+		|| y < -1.0 || y > 1.0
+		|| z < -1.0 || z > 1.0)
+	{
+		ft_free_split(coords);
+		error_exit("Vector components must be in range [-1, 1]\n");
+	}
 	ft_free_split(coords);
 }
