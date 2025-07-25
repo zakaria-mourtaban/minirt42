@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
-/*   Updated: 2025/07/20 15:28:31 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:29:59 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,43 +19,24 @@ double	degrees_to_radians(double degrees)
 
 double	ft_atof(const char *str)
 {
-	double	res;
-	double	frac;
+	double	int_part;
+	double	dec_part;
 	double	sign;
-	int		dot;
 	int		i;
 
-	res = 0.0;
-	frac = 0.1;
+	i = -1;
+	int_part = 0.0;
+	dec_part = 0.0;
 	sign = 1.0;
-	dot = 0;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
+	if (*str == '+' || *str == '-')
+		if (*str++ == '-')
 			sign = -1.0;
-		i++;
-	}
-	while ((str[i] >= '0' && str[i] <= '9') || str[i] == '.')
-	{
-		if (str[i] == '.')
-		{
-			dot = 1;
-			i++;
-			continue ;
-		}
-		if (!dot)
-			res = res * 10.0 + (str[i] - '0');
-		else
-		{
-			res = res + (str[i] - '0') * frac;
-			frac *= 0.1;
-		}
-		i++;
-	}
-	return (res * sign);
+	while (ft_isdigit(*str))
+		int_part = int_part * 10 + (*str++ - '0');
+	if (*str == '.' && *str++)
+		while (ft_isdigit(*str))
+			dec_part += (pow(10, i--) * (*str++ - '0'));
+	return (sign * (int_part + dec_part));
 }
 
 int	ft_strarrlen(char **arr)

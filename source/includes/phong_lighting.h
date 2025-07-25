@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*   phong_lighting.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/10 12:25:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/25 14:33:14 by mkraytem         ###   ########.fr       */
+/*   Created: 2025/07/25 13:53:31 by mkraytem          #+#    #+#             */
+/*   Updated: 2025/07/25 14:12:18 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef PHONG_LIGHTING_H
+# define PHONG_LIGHTING_H
 
-void	ft_bzero(void *s, size_t n)
-{
-	unsigned char	*str;
-	size_t			i;
+typedef struct s_scene	t_scene;
 
-	str = s;
-	i = 0;
-	while (i < n)
-	{
-		str[i] = 0;
-		i++;
-	}
-}
+t_color	phong_lighting(t_scene *scene, t_hit_record *rec);
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/24 11:37:23 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:31:08 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,13 @@ t_ray	get_ray(t_camera *cam, int i, int j)
 	t_vec3	v_offset;
 	t_vec3	target;
 	t_vec3	ray_direction;
-	double	u_param;
-	double	v_param;
 
 	offset = sample_square();
-	u_param = (i + offset.e[0]) / (cam->image_width - 1);
-	v_param = (j + offset.e[1]) / (cam->image_height - 1);
 	target = cam->pixel00_loc;
-	u_offset = vec3_scale(&cam->horizontal, u_param);
-	v_offset = vec3_scale(&cam->vertical, v_param);
+	u_offset = vec3_scale(&cam->horizontal,
+			(i + offset.e[0]) / (cam->image_width - 1));
+	v_offset = vec3_scale(&cam->vertical,
+			(j + offset.e[1]) / (cam->image_height - 1));
 	target = vec3_add(&target, &u_offset);
 	target = vec3_subtract(&target, &v_offset);
 	ray_direction = vec3_subtract(&target, &cam->center);

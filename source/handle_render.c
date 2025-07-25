@@ -6,46 +6,11 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 10:17:44 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/25 13:52:56 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:00:38 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minirt.h"
-
-static t_color	phong_lighting(t_scene *scene, t_hit_record *rec)
-{
-	t_color	ambient;
-	t_color	diffuse;
-	t_vec3	light_dir;
-	double	light_dist;
-	t_ray	shadow_ray;
-	double	diff;
-	t_vec3	offset;
-	t_color	light_color;
-	t_color	object_color;
-	t_color	ambient_contrib;
-	t_color	diffuse_contrib;
-	t_vec3	shadow_ray_orig;
-
-	ambient = vec3_scale(&scene->ambient_color, scene->ambient_ratio);
-	light_dir = vec3_subtract(&scene->light.position, &rec->p);
-	light_dist = vec3_length(&light_dir);
-	light_dir = vec3_unit_vector(&light_dir);
-	offset = vec3_scale(&rec->normal, 1e-4);
-	shadow_ray_orig = vec3_add(&rec->p, &offset);
-	shadow_ray = ray_create(shadow_ray_orig, light_dir);
-	if (hittable_list_hit((t_hittable *)scene->world, &shadow_ray,
-			interval_new(0, light_dist), &(t_hit_record){}))
-		diff = 0;
-	else
-		diff = fmax(vec3_dot(&rec->normal, &light_dir), 0.0);
-	light_color = (t_color){{1.0, 1.0, 1.0}};
-	diffuse = vec3_scale(&light_color, diff * scene->light.brightness);
-	object_color = rec->mat->albedo;
-	ambient_contrib = vec3_multiply_components(&object_color, &ambient);
-	diffuse_contrib = vec3_multiply_components(&object_color, &diffuse);
-	return (vec3_add(&ambient_contrib, &diffuse_contrib));
-}
 
 static t_color	background_color(const t_ray *r)
 {
