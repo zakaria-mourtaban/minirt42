@@ -59,7 +59,7 @@ void	parse_camera(char **tokens, t_scene *scene)
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);
 	fov = ft_atof(tokens[3]);
-	scene->camera->vfov = fov;
+	scene->camera->vfov = -fov;
 	scene->camera->aspect_ratio = 16.0 / 9.0;
 	scene->camera->image_width = 800;
 	look_dir = vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);

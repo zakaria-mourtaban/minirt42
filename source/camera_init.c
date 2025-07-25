@@ -60,8 +60,17 @@ void	initialize_camera(t_camera *camera)
 	camera->center = camera->lookfrom;
 	look_dir = vec3_subtract(&camera->lookfrom, &camera->lookat);
 	focal_length = vec3_length(&look_dir);
-	viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
-		* focal_length;
+	if (camera->vfov < 0)
+	{
+		camera->vfov = -camera->vfov;
+		viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
+			* focal_length;
+	}
+	else
+	{
+		viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
+			* focal_length;
+	}
 	viewport_width = viewport_height * ((double)camera->image_width
 			/ camera->image_height);
 	init_camera_vectors(camera);
