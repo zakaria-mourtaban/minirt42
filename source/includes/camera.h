@@ -47,6 +47,8 @@ typedef struct s_camera
 	t_vec3		v;
 	t_vec3		w;
 
+	t_vec3		horizontal;
+	t_vec3		vertical;
 	void		*mlx;
 	void		*win;
 	t_image		image;

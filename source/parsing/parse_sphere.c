@@ -26,7 +26,7 @@ void	parse_sphere(char **tokens, t_scene *scene)
 	c.e[0] = ft_atof(color[0]) / 255.0;
 	c.e[1] = ft_atof(color[1]) / 255.0;
 	c.e[2] = ft_atof(color[2]) / 255.0;
-	mat = material_new_lambertian(&c);
+	mat = material_new_metal(&c, 0);
 	hittable_list_add(scene->world, (t_hittable *)sphere_new(
 			vec3_create(ft_atof(center[0]),
 				ft_atof(center[1]), ft_atof(center[2])),

@@ -25,18 +25,22 @@ static t_vec3	sample_square(void)
 t_ray	get_ray(t_camera *cam, int i, int j)
 {
 	t_vec3	offset;
-	t_vec3	pixel_sample;
-	t_vec3	scaled_u;
-	t_vec3	scaled_v;
+	t_vec3	u_offset;
+	t_vec3	v_offset;
+	t_vec3	target;
 	t_vec3	ray_direction;
+	double	u_param;
+	double	v_param;
 
 	offset = sample_square();
-	pixel_sample = cam->pixel00_loc;
-	scaled_u = vec3_scale(&cam->pixel_delta_u, i + offset.e[0]);
-	scaled_v = vec3_scale(&cam->pixel_delta_v, j + offset.e[1]);
-	vec3_add_inplace(&pixel_sample, &scaled_u);
-	vec3_add_inplace(&pixel_sample, &scaled_v);
-	ray_direction = vec3_subtract(&pixel_sample, &cam->center);
+	u_param = (i + offset.e[0]) / (cam->image_width - 1);
+	v_param = (j + offset.e[1]) / (cam->image_height - 1);
+	target = cam->pixel00_loc;
+	u_offset = vec3_scale(&cam->horizontal, u_param);
+	v_offset = vec3_scale(&cam->vertical, v_param);
+	target = vec3_add(&target, &u_offset);
+	target = vec3_subtract(&target, &v_offset);
+	ray_direction = vec3_subtract(&target, &cam->center);
 	return (ray_create(cam->center, ray_direction));
 }
 

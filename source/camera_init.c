@@ -35,22 +35,18 @@ static void	init_camera_vectors(t_camera *camera)
 	camera->v = vec3_cross(&camera->w, &camera->u);
 }
 
-static void	init_upper_left(t_camera *camera, double focal_length)
+static void	init_upper_left(t_camera *camera)
 {
-	t_point3	viewport_upper_left;
-	t_vec3		temp_vec;
-	t_vec3		temp_vec2;
-	t_vec3		temp_vec3;
+    t_vec3 half_horizontal;
+    t_vec3 half_vertical;
 
-	temp_vec = vec3_scale(&camera->w, focal_length);
-	viewport_upper_left = vec3_subtract(&camera->center, &temp_vec);
-	temp_vec2 = vec3_divide(&camera->pixel_delta_u, 2);
-	viewport_upper_left = vec3_subtract(&viewport_upper_left, &temp_vec2);
-	temp_vec3 = vec3_divide(&camera->pixel_delta_v, 2);
-	viewport_upper_left = vec3_subtract(&viewport_upper_left, &temp_vec3);
-	temp_vec = vec3_add(&camera->pixel_delta_u, &camera->pixel_delta_v);
-	temp_vec2 = vec3_scale(&temp_vec, 0.5);
-	camera->pixel00_loc = vec3_add(&viewport_upper_left, &temp_vec2);
+    // Formula: origin - (horizontal/2) + (vertical/2) - w
+    half_horizontal = vec3_divide(&camera->horizontal, 2.0);
+    half_vertical = vec3_divide(&camera->vertical, 2.0);
+
+    camera->pixel00_loc = vec3_subtract(&camera->lookfrom, &half_horizontal);
+    camera->pixel00_loc = vec3_add(&camera->pixel00_loc, &half_vertical);
+    camera->pixel00_loc = vec3_subtract(&camera->pixel00_loc, &camera->w);
 }
 
 void	initialize_camera(t_camera *camera)
@@ -62,17 +58,17 @@ void	initialize_camera(t_camera *camera)
 
 	camera->image_height = camera->image_width / camera->aspect_ratio;
 	if (camera->image_height < 1)
-	{
 		camera->image_height = 1;
-	}
 	camera->center = camera->lookfrom;
 	look_dir = vec3_subtract(&camera->lookfrom, &camera->lookat);
 	focal_length = vec3_length(&look_dir);
-	viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov)
-			/ 2.0) * focal_length;
+	viewport_height = 2.0 * tan(degrees_to_radians(camera->vfov) / 2.0)
+		* focal_length;
 	viewport_width = viewport_height * ((double)camera->image_width
 			/ camera->image_height);
 	init_camera_vectors(camera);
+	camera->horizontal = vec3_scale(&camera->u, viewport_width);
+	camera->vertical = vec3_scale(&camera->v, viewport_height);
 	init_viewport(camera, viewport_height, viewport_width);
-	init_upper_left(camera, focal_length);
+	init_upper_left(camera);
 }
