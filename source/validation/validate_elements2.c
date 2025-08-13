@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 20:21:28 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/20 20:27:02 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:11:06 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,28 @@
 void	validate_plane(char **tokens, int count)
 {
 	if (count != 4)
-		error_exit("Plane: wrong number of arguments (expected 4)\n");
-	validate_vector_format(tokens[1]);
-	validate_normalized_vector(tokens[2]);
-	validate_color_format(tokens[3]);
+		error_exit("Plane: expected arguments  4\n", tokens);
+	validate_vector_format(tokens[1], tokens);
+	validate_normalized_vector(tokens[2], tokens);
+	validate_color_format(tokens[3], tokens);
 }
 
 void	validate_sphere(char **tokens, int count)
 {
 	if (count != 4)
-		error_exit("Sphere: wrong number of arguments (expected 4)\n");
-	validate_vector_format(tokens[1]);
-	validate_positive_double(tokens[2], "Sphere diameter");
-	validate_color_format(tokens[3]);
+		error_exit("Sphere: expected 4 arguments\n", tokens);
+	validate_vector_format(tokens[1], tokens);
+	validate_positive_double(tokens[2], "Sphere diameter", tokens);
+	validate_color_format(tokens[3], tokens);
 }
 
 void	validate_cylinder(char **tokens, int count)
 {
 	if (count != 6)
-		error_exit("Cylinder: wrong number of arguments (expected 6)\n");
-	validate_vector_format(tokens[1]);
-	validate_normalized_vector(tokens[2]);
-	validate_positive_double(tokens[3], "Cylinder diameter");
-	validate_positive_double(tokens[4], "Cylinder height");
-	validate_color_format(tokens[5]);
+		error_exit("Cylinder: expected 6 arguments\n", tokens);
+	validate_vector_format(tokens[1], tokens);
+	validate_normalized_vector(tokens[2], tokens);
+	validate_positive_double(tokens[3], "Cylinder diameter", tokens);
+	validate_positive_double(tokens[4], "Cylinder height", tokens);
+	validate_color_format(tokens[5], tokens);
 }

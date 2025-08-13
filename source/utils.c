@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
-/*   Updated: 2025/07/25 14:29:59 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:00:42 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void	ft_free_split(char **arr)
 	int	i;
 
 	i = 0;
+	if (arr == NULL)
+		return ;
 	while (arr[i] != NULL)
 	{
 		free(arr[i]);
@@ -62,8 +64,9 @@ void	ft_free_split(char **arr)
 	free(arr);
 }
 
-void	error_exit(const char *msg)
+void	error_exit(const char *msg, char **tokens)
 {
+	ft_free_split(tokens);
 	write(2, "Error\n", 6);
 	write(2, msg, ft_strlen(msg));
 	exit(1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/25 16:45:17 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:13:18 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,11 @@ int	main(int argc, char **argv)
 	t_scene	scene;
 
 	if (argc != 2)
-		return (1);
+		error_exit("Usage: ./miniRT <scene_file.rt>\n", NULL);
+	validate_rt_file(argv[1]);
 	scene.camera = malloc(sizeof(t_camera));
-	if (!scene.camera)
-		return (1);
 	scene.world = hittable_list_new(8);
-	(validate_rt_file(argv[1]), parse_rt_file(argv[1], &scene));
+	parse_rt_file(argv[1], &scene);
 	initialize_scene(&scene);
 	scene.win = mlx_new_window(scene.mlx, scene.camera->image_width,
 			scene.camera->image_height, "miniRT");

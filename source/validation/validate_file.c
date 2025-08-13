@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 00:00:00 by 42student         #+#    #+#             */
-/*   Updated: 2025/07/25 12:03:13 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/13 23:47:43 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	process_line(char *line, int *a_flag, int *c_flag, int *l_flag)
 		return ;
 	tokens = ft_split(line, ' ');
 	if (!tokens || !tokens[0])
-		error_exit("Error: Invalid line format\n");
+		error_exit("Error: Invalid line format\n", tokens);
 	if (ft_strncmp(tokens[0], "A", 2) == 0)
 		validate_ambient(tokens, ft_strarrlen(tokens), a_flag);
 	else if (ft_strncmp(tokens[0], "C", 2) == 0)
@@ -34,7 +34,7 @@ static void	process_line(char *line, int *a_flag, int *c_flag, int *l_flag)
 	else if (ft_strncmp(tokens[0], "cy", 3) == 0)
 		validate_cylinder(tokens, ft_strarrlen(tokens));
 	else
-		error_exit("Error: Unknown identifier\n");
+		error_exit("Error: Unknown identifier\n", tokens);
 	ft_free_split(tokens);
 }
 
@@ -73,32 +73,36 @@ static void	read_and_validate_file(int fd, t_element_flags *flags)
 		bytes = read(fd, buf, 4096);
 	}
 	if (bytes < 0)
-		error_exit("Error: Failed to read file\n");
+		error_exit("Error: Failed to read file\n", NULL);
 }
 
 static void	check_required_elements(int a_flag, int c_flag, int l_flag)
 {
 	if (!a_flag)
-		error_exit("Error: Missing ambient light (A)\n");
+		error_exit("Error: Missing ambient light (A)\n", NULL);
 	if (!c_flag)
-		error_exit("Error: Missing camera (C)\n");
+		error_exit("Error: Missing camera (C)\n", NULL);
 	if (!l_flag)
-		error_exit("Error: Missing light (L)\n");
+		error_exit("Error: Missing light (L)\n", NULL);
 }
 
 void	validate_rt_file(const char *filename)
 {
 	int				fd;
 	t_element_flags	flags;
+	size_t			len;
 
 	if (!filename || !*filename)
-		error_exit("Error: Invalid filename\n");
+		error_exit("Error: Invalid filename\n", NULL);
+	len = ft_strlen(filename);
+	if (len < 3 || ft_strncmp(filename + len - 3, ".rt", 3) != 0)
+		error_exit("Error: File must have .rt extension\n", NULL);
 	flags.a_flag = 0;
 	flags.c_flag = 0;
 	flags.l_flag = 0;
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		error_exit("Error: Cannot open file\n");
+		error_exit("Error: Cannot open file\n", NULL);
 	read_and_validate_file(fd, &flags);
 	close(fd);
 	check_required_elements(flags.a_flag,
