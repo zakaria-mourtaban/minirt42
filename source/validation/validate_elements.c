@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 20:21:18 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/08/14 00:13:03 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/14 09:33:58 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ void	validate_light(char **tokens, int count, int *l_flag)
 {
 	double	brightness;
 
-	if (count != 3)
-		error_exit("Light: expected 3 arguments\n", tokens);
+	if (count != 4)
+		error_exit("Light: expected 4 arguments\n", tokens);
 	if (*l_flag)
 		error_exit("Error: only one light allowed\n", tokens);
 	*l_flag = 1;
