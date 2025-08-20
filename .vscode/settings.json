@@ -10,6 +10,11 @@
 		"stdbool.h": "c",
 		"vec3_defs.h": "c",
 		"vec3_ops.h": "c",
-		"vec3_ops3.h": "c"
+		"vec3_ops3.h": "c",
+		"mlx.h": "c",
+		"handle_render_loop.h": "c",
+		"validate_file.h": "c",
+		"parse_file.h": "c",
+		"hittable_list.h": "c"
 	}
 }

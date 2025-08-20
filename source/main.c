@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:21:56 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/08/14 00:13:18 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/20 14:46:17 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	initialize_scene(t_scene *scene)
 {
 	scene->rerender_needed = true;
 	scene->mlx = mlx_init();
+	scene->keys_pressed[115] = false;
 	initialize_camera(scene->camera);
 }
 
@@ -58,7 +59,7 @@ int	main(int argc, char **argv)
 		error_exit("Usage: ./miniRT <scene_file.rt>\n", NULL);
 	validate_rt_file(argv[1]);
 	scene.camera = malloc(sizeof(t_camera));
-	scene.world = hittable_list_new(8);
+	scene.world = hittable_list_new(100);
 	parse_rt_file(argv[1], &scene);
 	initialize_scene(&scene);
 	scene.win = mlx_new_window(scene.mlx, scene.camera->image_width,
@@ -71,8 +72,8 @@ int	main(int argc, char **argv)
 	mlx_hook(scene.win, 2, 1L << 0, key_press_hook, &scene);
 	mlx_hook(scene.win, 3, 1L << 1, key_release_hook, &scene);
 	mlx_hook(scene.win, 17, 0, exit_program, &scene);
-	mlx_hook(scene.win, 6, 1L << 6, mouse_move_hook, &scene);
-	mlx_mouse_move(scene.mlx, scene.win, 0, 0);
+	// mlx_hook(scene.win, 6, 1L << 6, mouse_move_hook, &scene);
+	// mlx_mouse_move(scene.mlx, scene.win, 0, 0);
 	mlx_loop_hook(scene.mlx, render_loop, &scene);
 	mlx_loop(scene.mlx);
 	return (0);

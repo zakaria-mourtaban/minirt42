@@ -6,11 +6,12 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 15:03:50 by mkraytem          #+#    #+#             */
-/*   Updated: 2025/07/24 23:01:16 by mkraytem         ###   ########.fr       */
+/*   Updated: 2025/08/20 14:48:31 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minirt.h"
+#define M_PI	3.14159265358979323846
 
 static	void	parse_camera_position(char **tokens, t_camera *camera)
 {
@@ -27,8 +28,8 @@ static	void	parse_camera_orientation(char **tokens, t_camera *camera)
 	char	**orient;
 
 	orient = ft_split(tokens[2], ',');
-	camera->lookat = vec3_create(ft_atof(orient[0]),
-			ft_atof(orient[1]), ft_atof(orient[2]));
+	camera->lookat = vec3_create((ft_atof(orient[0]) * 180),
+			(ft_atof(orient[1]) * 180), (ft_atof(orient[2]) * 180));
 	ft_free_split(orient);
 }
 
@@ -59,7 +60,7 @@ void	parse_camera(char **tokens, t_scene *scene)
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);
 	fov = ft_atof(tokens[3]);
-	scene->camera->vfov = -fov;
+	scene->camera->vfov = -fov * 0.075;
 	scene->camera->aspect_ratio = 16.0 / 9.0;
 	scene->camera->image_width = 800;
 	look_dir = vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 00:15:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2025/07/25 16:13:02 by zmourtab         ###   ########.fr       */
+/*   Updated: 2025/08/20 14:49:06 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_light
 {
 	t_point3	position;
 	double		brightness;
-	t_color     color;
+	t_color		color;
 }	t_light;
 
 typedef struct s_scene
@@ -68,7 +68,6 @@ typedef struct s_scene
 	int				last_y;
 	bool			rerender_needed;
 	bool			keys_pressed[256];
-	// Lighting information from the subject
 	t_color			ambient_color;
 	double			ambient_ratio;
 	t_light			light;
