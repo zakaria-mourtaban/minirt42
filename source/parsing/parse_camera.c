@@ -26,10 +26,12 @@ static	void	parse_camera_position(char **tokens, t_camera *camera)
 static	void	parse_camera_orientation(char **tokens, t_camera *camera)
 {
 	char	**orient;
+	t_vec3	direction;
 
 	orient = ft_split(tokens[2], ',');
-	camera->lookat = vec3_create((ft_atof(orient[0]) * 180),
-			(ft_atof(orient[1]) * 180), (ft_atof(orient[2]) * 180));
+	direction = vec3_create(ft_atof(orient[0]), ft_atof(orient[1]), ft_atof(orient[2]));
+	direction = vec3_unit_vector(&direction);
+	camera->lookat = vec3_add(&camera->lookfrom, &direction);
 	ft_free_split(orient);
 }
 
@@ -60,7 +62,7 @@ void	parse_camera(char **tokens, t_scene *scene)
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);
 	fov = ft_atof(tokens[3]);
-	scene->camera->vfov = -fov * (M_PI / 180.0);
+	scene->camera->vfov = fov * (M_PI / 180.0);
 	scene->camera->aspect_ratio = 16.0 / 9.0;
 	scene->camera->image_width = 800;
 	look_dir = vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);
