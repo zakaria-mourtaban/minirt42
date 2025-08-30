@@ -72,8 +72,6 @@ int	main(int argc, char **argv)
 	mlx_hook(scene.win, 2, 1L << 0, key_press_hook, &scene);
 	mlx_hook(scene.win, 3, 1L << 1, key_release_hook, &scene);
 	mlx_hook(scene.win, 17, 0, exit_program, &scene);
-	// mlx_hook(scene.win, 6, 1L << 6, mouse_move_hook, &scene);
-	// mlx_mouse_move(scene.mlx, scene.win, 0, 0);
 	mlx_loop_hook(scene.mlx, render_loop, &scene);
 	mlx_loop(scene.mlx);
 	return (0);

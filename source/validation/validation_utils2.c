@@ -68,7 +68,10 @@ void	validate_color_format(char *color_str, char **tokens)
 	g = ft_atoi(colors[1]);
 	b = ft_atoi(colors[2]);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-		error_exit("Color values out of range [0,255]\n", colors);
+	{
+		ft_free_split(colors);
+		error_exit("Color values out of range [0,255]\n", tokens);
+	}
 	ft_free_split(colors);
 }
 
