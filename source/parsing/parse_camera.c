@@ -29,7 +29,8 @@ static	void	parse_camera_orientation(char **tokens, t_camera *camera)
 	t_vec3	direction;
 
 	orient = ft_split(tokens[2], ',');
-	direction = vec3_create(ft_atof(orient[0]), ft_atof(orient[1]), ft_atof(orient[2]));
+	direction = vec3_create(ft_atof(orient[0]),
+			ft_atof(orient[1]), ft_atof(orient[2]));
 	direction = vec3_unit_vector(&direction);
 	camera->lookat = vec3_add(&camera->lookfrom, &direction);
 	ft_free_split(orient);
