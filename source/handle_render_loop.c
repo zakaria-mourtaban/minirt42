@@ -12,17 +12,18 @@
 
 #include "includes/minirt.h"
 #include "includes/handle_render_loop.h"
+#include "includes/handle_render.h"
 #include <math.h>
 #include "mlx.h"
 
 #define SENSITIVITY 0.002
 #define MOVE_SPEED 0.5
-#define M_PI		3.14159265358979323846
+#define M_PI 3.14159265358979323846
 
-int	mouse_move_hook(int x, int y, t_scene *scene)
+int mouse_move_hook(int x, int y, t_scene *scene)
 {
-	int	dx;
-	int	dy;
+	int dx;
+	int dy;
 
 	if (scene->state == INTERACTIVE)
 	{
@@ -39,18 +40,18 @@ int	mouse_move_hook(int x, int y, t_scene *scene)
 			update_camera_direction(scene);
 			scene->rerender_needed = true;
 			mlx_mouse_move(scene->mlx, scene->win,
-				scene->camera->image_width / 2,
-				scene->camera->image_height / 2);
+						   scene->camera->image_width / 2,
+						   scene->camera->image_height / 2);
 		}
 	}
 	return (0);
 }
 
-void	process_input(t_scene *scene)
+void process_input(t_scene *scene)
 {
-	t_vec3	move;
-	t_vec3	right;
-	t_vec3	forward;
+	t_vec3 move;
+	t_vec3 right;
+	t_vec3 forward;
 
 	move = vec3_create_zero();
 	forward = vec3_negate(&scene->camera->w);
@@ -73,36 +74,36 @@ void	process_input(t_scene *scene)
 	}
 }
 
-void	handle_interactive_state(t_scene *scene)
+void handle_interactive_state(t_scene *scene)
 {
 	process_input(scene);
 	if (scene->rerender_needed)
 	{
 		mlx_mouse_hide(scene->mlx, scene->win);
 		scene->camera->samples_per_pixel = 1;
-		scene->camera->max_depth = 10;
+		scene->camera->max_depth = 3;
 		initialize_camera(scene->camera);
-		render_frame(scene);
+		render_frame_fast(scene);
 		mlx_put_image_to_window(scene->mlx, scene->win,
-			scene->camera->image.img_ptr, 0, 0);
+								scene->camera->image.img_ptr, 0, 0);
 		scene->rerender_needed = false;
 	}
 }
 
-void	handle_rendering_state(t_scene *scene)
+void handle_rendering_state(t_scene *scene)
 {
 	scene->camera->samples_per_pixel = 5;
 	scene->camera->max_depth = 50;
 	initialize_camera(scene->camera);
 	render_frame(scene);
 	mlx_put_image_to_window(scene->mlx, scene->win,
-		scene->camera->image.img_ptr, 0, 0);
+							scene->camera->image.img_ptr, 0, 0);
 	scene->state = DONE;
 }
 
-int	render_loop(void *param)
+int render_loop(void *param)
 {
-	t_scene	*scene;
+	t_scene *scene;
 
 	scene = (t_scene *)param;
 	if (scene->state == INTERACTIVE)

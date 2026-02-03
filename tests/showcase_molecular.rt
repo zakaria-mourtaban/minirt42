@@ -1,0 +1,45 @@
+# Molecular Structure - Water and Carbon molecules
+A 0.15 240,248,255
+
+C 0,5,18 0,-0.1,-1 60
+L 5,15,10 0.9 255,255,255
+
+# Water molecule (H2O) - center
+# Oxygen (red)
+sp 0,3,0 1.2 255,50,50
+# Hydrogen atoms (white)
+sp -1.5,2,0.8 0.6 240,240,255
+sp 1.5,2,0.8 0.6 240,240,255
+# Bonds (thin cylinders)
+cy -0.75,2.5,0.4 -0.6,-0.4,0.3 0.15 1.8 200,200,200
+cy 0.75,2.5,0.4 0.6,-0.4,0.3 0.15 1.8 200,200,200
+
+# Carbon dioxide (CO2) - right side
+# Carbon (black)
+sp 6,4,0 1 40,40,40
+# Oxygen atoms
+sp 4,4,0 0.9 255,50,50
+sp 8,4,0 0.9 255,50,50
+# Bonds
+cy 5,4,0 -1,0,0 0.12 2 180,180,180
+cy 7,4,0 1,0,0 0.12 2 180,180,180
+
+# Methane (CH4) - left side
+# Carbon center
+sp -6,4,-2 1 40,40,40
+# Hydrogen atoms (tetrahedral arrangement)
+sp -5,5.2,-1.2 0.5 240,240,255
+sp -7,5.2,-1.2 0.5 240,240,255
+sp -5.3,3,-3 0.5 240,240,255
+sp -6.7,3,-3 0.5 240,240,255
+
+# Floating atoms decoration
+sp -3,7,3 0.8 100,200,255
+sp 3,6,-3 0.7 255,200,100
+sp 0,8,-5 0.9 200,100,255
+
+# Lab floor
+pl 0,0,0 0,1,0 220,230,240
+
+# Back panel
+pl 0,0,-10 0,0,1 200,210,220

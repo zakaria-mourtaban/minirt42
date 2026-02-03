@@ -12,12 +12,12 @@
 
 #include "includes/minirt.h"
 
-static t_color	background_color(const t_ray *r)
+static t_color background_color(const t_ray *r)
 {
-	t_vec3		unit_dir;
-	double		a;
-	t_color		start;
-	t_color		end;
+	t_vec3 unit_dir;
+	double a;
+	t_color start;
+	t_color end;
 
 	unit_dir = vec3_unit_vector(&r->dir);
 	a = 0.5 * (unit_dir.e[1] + 1.0);
@@ -28,16 +28,16 @@ static t_color	background_color(const t_ray *r)
 	return (vec3_add(&start, &end));
 }
 
-static t_color	ray_color(const t_ray *r, t_scene *scene, int depth)
+static t_color ray_color(const t_ray *r, t_scene *scene, int depth)
 {
-	t_hit_record		rec;
-	t_scatter_record	srec;
-	t_color				scattered;
+	t_hit_record rec;
+	t_scatter_record srec;
+	t_color scattered;
 
 	if (depth <= 0)
 		return (vec3_create(0, 0, 0));
 	if (!hittable_list_hit((t_hittable *)scene->world, r,
-			interval_new(0.001, INFINITY), &rec))
+						   interval_new(0.001, INFINITY), &rec))
 		return (background_color(r));
 	if (rec.mat->scatter(rec.mat, r, &rec, &srec))
 	{
@@ -47,12 +47,12 @@ static t_color	ray_color(const t_ray *r, t_scene *scene, int depth)
 	return (phong_lighting(scene, &rec));
 }
 
-static t_color	render_pixel(t_camera *cam, int i, int j, t_scene *scene)
+static t_color render_pixel(t_camera *cam, int i, int j, t_scene *scene)
 {
-	t_color	pixel_color;
-	t_ray	r;
-	t_color	ray_c;
-	int		sample;
+	t_color pixel_color;
+	t_ray r;
+	t_color ray_c;
+	int sample;
 
 	pixel_color = vec3_create(0, 0, 0);
 	sample = 0;
@@ -66,30 +66,72 @@ static t_color	render_pixel(t_camera *cam, int i, int j, t_scene *scene)
 	return (pixel_color);
 }
 
-void	render_frame(t_scene *scene)
+void render_frame(t_scene *scene)
 {
-	char	*dst;
-	t_color	pixel_color;
-	int		i;
-	int		j;
+	char *dst;
+	t_color pixel_color;
+	int i;
+	int j;
 
 	j = 0;
 	while (j < scene->camera->image_height)
 	{
 		ft_printf("\rScanlines remaining: %d ",
-			(scene->camera->image_height - j));
+				  (scene->camera->image_height - j));
 		i = 0;
 		while (i < scene->camera->image_width)
 		{
 			pixel_color = render_pixel(scene->camera, i, j, scene);
-			dst = scene->camera->image.buffer
-				+ (j * scene->camera->image.line_bytes
-					+ i * (scene->camera->image.pixel_bits / 8));
+			dst = scene->camera->image.buffer + (j * scene->camera->image.line_bytes + i * (scene->camera->image.pixel_bits / 8));
 			*(unsigned int *)dst = color_to_int(&pixel_color,
-					scene->camera->samples_per_pixel);
+												scene->camera->samples_per_pixel);
 			i++;
 		}
 		j++;
 	}
 	ft_printf("\rDone.                 \n");
+}
+
+static void fill_block(t_scene *scene, int x, int y, int step, unsigned int col)
+{
+	char *dst;
+	int dx;
+	int dy;
+
+	dy = 0;
+	while (dy < step && (y + dy) < scene->camera->image_height)
+	{
+		dx = 0;
+		while (dx < step && (x + dx) < scene->camera->image_width)
+		{
+			dst = scene->camera->image.buffer + ((y + dy) * scene->camera->image.line_bytes + (x + dx) * (scene->camera->image.pixel_bits / 8));
+			*(unsigned int *)dst = col;
+			dx++;
+		}
+		dy++;
+	}
+}
+
+void render_frame_fast(t_scene *scene)
+{
+	t_color pixel_color;
+	unsigned int col;
+	int i;
+	int j;
+	int step;
+
+	step = 8;
+	j = 0;
+	while (j < scene->camera->image_height)
+	{
+		i = 0;
+		while (i < scene->camera->image_width)
+		{
+			pixel_color = render_pixel(scene->camera, i, j, scene);
+			col = color_to_int(&pixel_color, scene->camera->samples_per_pixel);
+			fill_block(scene, i, j, step, col);
+			i += step;
+		}
+		j += step;
+	}
 }

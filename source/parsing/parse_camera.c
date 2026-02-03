@@ -11,37 +11,37 @@
 /* ************************************************************************** */
 
 #include "../includes/minirt.h"
-#define M_PI	3.14159265358979323846
+#define M_PI 3.14159265358979323846
 
-static	void	parse_camera_position(char **tokens, t_camera *camera)
+static void parse_camera_position(char **tokens, t_camera *camera)
 {
-	char	**pos;
+	char **pos;
 
 	pos = ft_split(tokens[1], ',');
 	camera->lookfrom = vec3_create(ft_atof(pos[0]),
-			ft_atof(pos[1]), ft_atof(pos[2]));
+								   ft_atof(pos[1]), ft_atof(pos[2]));
 	ft_free_split(pos);
 }
 
-static	void	parse_camera_orientation(char **tokens, t_camera *camera)
+static void parse_camera_orientation(char **tokens, t_camera *camera)
 {
-	char	**orient;
-	t_vec3	direction;
+	char **orient;
+	t_vec3 direction;
 
 	orient = ft_split(tokens[2], ',');
 	direction = vec3_create(ft_atof(orient[0]),
-			ft_atof(orient[1]), ft_atof(orient[2]));
+							ft_atof(orient[1]), ft_atof(orient[2]));
 	direction = vec3_unit_vector(&direction);
 	camera->lookat = vec3_add(&camera->lookfrom, &direction);
 	ft_free_split(orient);
 }
 
-static	void	set_camera_angles(t_camera *camera)
+static void set_camera_angles(t_camera *camera)
 {
-	double	dx;
-	double	dy;
-	double	dz;
-	double	dir_len;
+	double dx;
+	double dy;
+	double dz;
+	double dir_len;
 
 	dx = camera->lookat.e[0] - camera->lookfrom.e[0];
 	dy = camera->lookat.e[1] - camera->lookfrom.e[1];
@@ -54,18 +54,18 @@ static	void	set_camera_angles(t_camera *camera)
 		camera->pitch = 0;
 }
 
-void	parse_camera(char **tokens, t_scene *scene)
+void parse_camera(char **tokens, t_scene *scene)
 {
-	double	fov;
-	t_vec3	look_dir;
-	double	dot;
+	double fov;
+	t_vec3 look_dir;
+	double dot;
 
 	parse_camera_position(tokens, scene->camera);
 	parse_camera_orientation(tokens, scene->camera);
 	fov = ft_atof(tokens[3]);
 	scene->camera->vfov = fov * (M_PI / 180.0);
 	scene->camera->aspect_ratio = 16.0 / 9.0;
-	scene->camera->image_width = 800;
+	scene->camera->image_width = 1600;
 	look_dir = vec3_subtract(&scene->camera->lookat, &scene->camera->lookfrom);
 	look_dir = vec3_unit_vector(&look_dir);
 	dot = fabs(look_dir.e[0] * 0 + look_dir.e[1] * 1 + look_dir.e[2] * 0);
