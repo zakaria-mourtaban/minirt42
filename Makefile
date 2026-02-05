@@ -5,17 +5,42 @@ OBJS = $(SRCS:%.c=%.o)
 PRINTF_DIR = ./ft_printf
 LIBFT_DIR = ./libft
 MINILIBX_DIR = ./minilibx
+MINILIBX_RAYLIB_DIR = ./minilibx_raylib
+
+# Raylib paths
+RAYLIB_PATH ?= /usr/local
+RAYLIB_INCLUDE = -I$(RAYLIB_PATH)/include
+RAYLIB_LIB = -L$(RAYLIB_PATH)/lib -lraylib
 
 # Library files
 PRINTF_LIB = $(PRINTF_DIR)/libftprintf.a
 LIBFT_LIB = $(LIBFT_DIR)/libft.a
 MINILIBX_LIB = $(MINILIBX_DIR)/libmlx.a
+MINILIBX_RAYLIB_LIB = $(MINILIBX_RAYLIB_DIR)/libmlx.a
 
 # Targets
 all: $(NAME)
 
 $(NAME): $(OBJS) $(PRINTF_LIB) $(LIBFT_LIB) $(MINILIBX_LIB)
 	gcc $(CFLAGS) -o $(NAME) $(OBJS) -Isource -I$(PRINTF_DIR) -L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_DIR) -lftprintf -lft -lmlx -lXext -lX11 -lm
+
+# Raylib backend target
+raylib: CFLAGS = -std=gnu11 -Wall -Wextra -g -I./minilibx_raylib $(RAYLIB_INCLUDE)
+raylib: $(OBJS) $(PRINTF_LIB) $(LIBFT_LIB) $(MINILIBX_RAYLIB_LIB)
+	gcc $(CFLAGS) -o $(NAME) $(OBJS) -Isource -I$(PRINTF_DIR) \
+		-L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_RAYLIB_DIR) \
+		-lftprintf -lft -lmlx $(RAYLIB_LIB) -lm -lpthread -ldl
+
+# WASM build target
+wasm: CFLAGS = -std=gnu11 -Wall -Wextra -O3 -I./minilibx_raylib
+wasm: CC = emcc
+wasm: $(SRCS) $(PRINTF_LIB) $(LIBFT_LIB)
+	@make -C $(MINILIBX_RAYLIB_DIR) wasm
+	$(CC) $(CFLAGS) -o $(NAME).html $(SRCS) -Isource -I$(PRINTF_DIR) \
+		-L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_RAYLIB_DIR) \
+		-lftprintf -lft -lmlx_wasm \
+		-s USE_GLFW=3 -s ASYNCIFY -s TOTAL_MEMORY=67108864 \
+		--shell-file shell.html
 
 %.o: source/%.c
 	gcc $(CFLAGS) -c $< -o $@
@@ -29,17 +54,22 @@ $(LIBFT_LIB):
 $(MINILIBX_LIB):
 	@make -C $(MINILIBX_DIR)
 
+$(MINILIBX_RAYLIB_LIB):
+	@make -C $(MINILIBX_RAYLIB_DIR)
+
 clean:
 	rm -f $(OBJS)
 	$(MAKE) -C $(PRINTF_DIR) clean
 	$(MAKE) -C $(LIBFT_DIR) clean
 	$(MAKE) -C $(MINILIBX_DIR) clean
+	$(MAKE) -C $(MINILIBX_RAYLIB_DIR) clean
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(NAME).html $(NAME).js $(NAME).wasm
 	$(MAKE) -C $(PRINTF_DIR) fclean
 	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(MINILIBX_RAYLIB_DIR) fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re raylib wasm
