@@ -169,6 +169,8 @@
     
     <script>
         var Module = {
+            arguments: ['tests/showcase_billiards.rt'],
+            
             canvas: (function() {
                 var canvas = document.getElementById('canvas');
                 canvas.addEventListener("webglcontextlost", function(e) {

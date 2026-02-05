@@ -83,7 +83,7 @@ typedef struct s_element_flags
 
 int exit_program(t_scene *scene);
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__EMSCRIPTEN__)
 #define KEY_ESC 65307
 #define KEY_W 119
 #define KEY_A 97
