@@ -49,6 +49,9 @@ void initialize_scene(t_scene *scene)
 
 	scene->state = INTERACTIVE;
 	scene->rerender_needed = true;
+	scene->mouse_warped = false;
+	scene->last_x = -1;
+	scene->last_y = -1;
 	scene->mlx = mlx_init();
 	i = 0;
 	while (i < 256)

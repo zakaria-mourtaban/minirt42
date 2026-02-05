@@ -16,7 +16,7 @@
 #include <math.h>
 #include "mlx.h"
 
-#define SENSITIVITY 0.002
+#define SENSITIVITY 0.005
 #define MOVE_SPEED 0.5
 #define M_PI 3.14159265358979323846
 
@@ -25,25 +25,28 @@ int mouse_move_hook(int x, int y, t_scene *scene)
 	int dx;
 	int dy;
 
-	if (scene->state == INTERACTIVE)
+	if (scene->state != INTERACTIVE)
+		return (0);
+	if (scene->last_x == -1)
 	{
-		dx = x - scene->camera->image_width / 2;
-		dy = y - scene->camera->image_height / 2;
-		if (dx != 0 || dy != 0)
-		{
-			scene->camera->yaw += dx * SENSITIVITY;
-			scene->camera->pitch -= dy * SENSITIVITY;
-			if (scene->camera->pitch > M_PI / 2.0 - 0.01)
-				scene->camera->pitch = M_PI / 2.0 - 0.01;
-			if (scene->camera->pitch < -M_PI / 2.0 + 0.01)
-				scene->camera->pitch = -M_PI / 2.0 + 0.01;
-			update_camera_direction(scene);
-			scene->rerender_needed = true;
-			mlx_mouse_move(scene->mlx, scene->win,
-						   scene->camera->image_width / 2,
-						   scene->camera->image_height / 2);
-		}
+		scene->last_x = x;
+		scene->last_y = y;
+		return (0);
 	}
+	dx = x - scene->last_x;
+	dy = y - scene->last_y;
+	scene->last_x = x;
+	scene->last_y = y;
+	if (dx == 0 && dy == 0)
+		return (0);
+	scene->camera->yaw += dx * SENSITIVITY;
+	scene->camera->pitch -= dy * SENSITIVITY;
+	if (scene->camera->pitch > M_PI / 2.0 - 0.01)
+		scene->camera->pitch = M_PI / 2.0 - 0.01;
+	if (scene->camera->pitch < -M_PI / 2.0 + 0.01)
+		scene->camera->pitch = -M_PI / 2.0 + 0.01;
+	update_camera_direction(scene);
+	scene->rerender_needed = true;
 	return (0);
 }
 
