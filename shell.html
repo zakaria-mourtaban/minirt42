@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniRT - WebAssembly Ray Tracer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        #canvas-container {
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .controls button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .controls button:hover {
+            background: #ff6b6b;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .info h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+        
+        .info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .info li {
+            padding: 5px 0;
+        }
+        
+        .info kbd {
+            background: #333;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        #status {
+            margin-top: 10px;
+            color: #888;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading.hidden {
+            display: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading MiniRT...</p>
+    </div>
+    
+    <h1>🎨 MiniRT</h1>
+    <p class="subtitle">Ray Tracer in WebAssembly</p>
+    
+    <div id="canvas-container">
+        <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+    </div>
+    
+    <div class="controls">
+        <button onclick="Module._mlx_loop_end(Module.mlx)">Stop</button>
+        <button onclick="location.reload()">Restart</button>
+    </div>
+    
+    <div class="info">
+        <h3>Controls</h3>
+        <ul>
+            <li><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> - Move camera</li>
+            <li><kbd>Mouse</kbd> - Look around</li>
+            <li><kbd>R</kbd> - High quality render</li>
+            <li><kbd>ESC</kbd> - Exit interactive mode</li>
+        </ul>
+    </div>
+    
+    <p id="status">Initializing...</p>
+    
+    <script>
+        var Module = {
+            arguments: ['tests/showcase_billiards.rt'],
+            
+            canvas: (function() {
+                var canvas = document.getElementById('canvas');
+                canvas.addEventListener("webglcontextlost", function(e) {
+                    alert('WebGL context lost. Reload the page.');
+                    e.preventDefault();
+                }, false);
+                return canvas;
+            })(),
+            
+            onRuntimeInitialized: function() {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('status').textContent = 'Running...';
+            },
+            
+            print: function(text) {
+                console.log(text);
+                if (text.includes('Error') || text.includes('error')) {
+                    document.getElementById('status').textContent = text;
+                }
+            },
+            
+            printErr: function(text) {
+                console.error(text);
+            }
+        };
+    </script>
+    {{{ SCRIPT }}}
+</body>
+</html>
