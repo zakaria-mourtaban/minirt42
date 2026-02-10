@@ -32,14 +32,21 @@ raylib: $(OBJS) $(PRINTF_LIB) $(LIBFT_LIB) $(MINILIBX_RAYLIB_LIB)
 		-lftprintf -lft -lmlx $(RAYLIB_LIB) -lm -lpthread -ldl
 
 # WASM build target
+RAYLIB_WASM_LIB ?= /home/nexus/raylib-wasm/src/libraylib.web.a
 wasm: CFLAGS = -std=gnu11 -Wall -Wextra -O3 -I./minilibx_raylib
 wasm: CC = emcc
-wasm: $(SRCS) $(PRINTF_LIB) $(LIBFT_LIB)
+wasm: $(SRCS)
+	@make -C $(LIBFT_DIR) wasm
+	@make -C $(PRINTF_DIR) wasm
 	@make -C $(MINILIBX_RAYLIB_DIR) wasm
 	$(CC) $(CFLAGS) -o $(NAME).html $(SRCS) -Isource -I$(PRINTF_DIR) \
 		-L$(PRINTF_DIR) -L$(LIBFT_DIR) -L$(MINILIBX_RAYLIB_DIR) \
-		-lftprintf -lft -lmlx_wasm \
-		-s USE_GLFW=3 -s ASYNCIFY -s TOTAL_MEMORY=67108864 \
+		-lftprintf_wasm -lft_wasm -lmlx_wasm \
+		$(RAYLIB_WASM_LIB) \
+		-sUSE_GLFW=3 -sASYNCIFY -sTOTAL_MEMORY=67108864 \
+		-s EXPORTED_RUNTIME_METHODS=ccall,cwrap \
+		-s EXPORTED_FUNCTIONS=_main,_DisableCursor,_EnableCursor \
+		--preload-file tests \
 		--shell-file shell.html
 
 %.o: source/%.c

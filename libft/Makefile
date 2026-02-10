@@ -21,10 +21,22 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 # bonus: $(OBJS) $(BONUS_OBJS)
 # 	$(AR) -r $(NAME) $?
+# WASM build
+WASM_NAME = libft_wasm.a
+WASM_OBJS = $(SRCS:.c=.wasm.o)
+
+wasm: $(WASM_NAME)
+
+$(WASM_NAME): $(WASM_OBJS)
+	emar rcs $(WASM_NAME) $(WASM_OBJS)
+
+%.wasm.o: %.c
+	emcc -Wall -Wextra -O3 -c $< -o $@
+
 clean:
-	rm -f $(OBJS:.c=.o) $(BONUS_OBJS:.c=.o)
+	rm -f $(OBJS:.c=.o) $(BONUS_OBJS:.c=.o) $(WASM_OBJS)
 fclean: clean
-	rm -f $(NAME) 
+	rm -f $(NAME) $(WASM_NAME)
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re bonus wasm
